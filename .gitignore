@@ -106,3 +106,12 @@ dist
 
 # MAC files
 .DS_Store
+
+# Build artifacts
+.build
+
+# Testing artifacts
+.reports
+
+# Sonar scanner artifacts
+.scannerwork

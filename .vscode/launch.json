@@ -15,40 +15,16 @@
       "port": 9229
     },
     {
-      "name": "GetLambdaFunction",
+      "name": "S3EventFunction",
       "type": "node",
       "request": "attach",
       "address": "localhost",
       "port": 5858,
-      "localRoot": "${workspaceRoot}/.aws-sam/build/GetLambdaFunction",
+      "localRoot": "${workspaceRoot}/.aws-sam/build/S3EventFunction",
       "remoteRoot": "/var/task",
       "protocol": "inspector",
       "stopOnEntry": false,
       "sourceMaps": true
-    },
-    {
-      "name": "PostLambdaFunction",
-      "type": "node",
-      "request": "attach",
-      "address": "localhost",
-      "port": 5858,
-      "localRoot": "${workspaceRoot}/.aws-sam/build/PostLambdaFunction",
-      "remoteRoot": "/var/task",
-      "protocol": "inspector",
-      "stopOnEntry": false,
-      "sourceMaps": true
-    },
-    {
-      "name": "CloudWatchEventLambdaFunction",
-      "type": "node",
-      "request": "attach",
-      "address": "localhost",
-      "port": 5858,
-      "localRoot": "${workspaceRoot}/.aws-sam/build/CloudWatchEventLambdaFunction",
-      "remoteRoot": "/var/task",
-      "protocol": "inspector",
-      "stopOnEntry": false,
-      "sourceMaps": true
-    },
+    }
   ]
 }

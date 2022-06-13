@@ -1,16 +1,28 @@
-import type { APIGatewayProxyEvent, Context, APIGatewayEventRequestContext } from 'aws-lambda';
+import type {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayEventRequestContext,
+} from 'aws-lambda';
 import { v4 } from 'uuid';
 import { createLogger, Logger } from '../../src/util/logger';
 
 describe('Test logger', () => {
   test('createLogger() via context lambdaId should return a logger object with the correct logFormat', () => {
-    const queryStringParameters: Record<string, string> = { message: 'Hello world!' };
+    const queryStringParameters: Record<string, string> = {
+      message: 'Hello world!',
+    };
     const apiRequestId: string = v4();
-    const requestContext: APIGatewayEventRequestContext = <APIGatewayEventRequestContext> { requestId: apiRequestId };
+    const requestContext: APIGatewayEventRequestContext = <
+      APIGatewayEventRequestContext
+    >{ requestId: apiRequestId };
     const headers: Record<string, string> = {};
-    const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent> { queryStringParameters, requestContext, headers };
+    const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent>{
+      queryStringParameters,
+      requestContext,
+      headers,
+    };
     const awsRequestId: string = v4();
-    const contextMock: Context = <Context> { awsRequestId };
+    const contextMock: Context = <Context>{ awsRequestId };
 
     const logger: Logger = createLogger(eventMock, contextMock);
 
@@ -20,13 +32,23 @@ describe('Test logger', () => {
   });
 
   test('createLogger() via header should return a logger object with the correct logFormat', () => {
-    const queryStringParameters: Record<string, string> = { message: 'Hello world!' };
+    const queryStringParameters: Record<string, string> = {
+      message: 'Hello world!',
+    };
     const apiRequestId: string = v4();
-    const requestContext: APIGatewayEventRequestContext = <APIGatewayEventRequestContext> { requestId: apiRequestId };
+    const requestContext: APIGatewayEventRequestContext = <
+      APIGatewayEventRequestContext
+    >{ requestId: apiRequestId };
     const headerCorrelationId: string = v4();
-    const headers: Record<string, string> = { 'X-Correlation-Id': headerCorrelationId };
-    const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent> { queryStringParameters, requestContext, headers };
-    const contextMock: Context = <Context> { };
+    const headers: Record<string, string> = {
+      'X-Correlation-Id': headerCorrelationId,
+    };
+    const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent>{
+      queryStringParameters,
+      requestContext,
+      headers,
+    };
+    const contextMock: Context = <Context>{};
 
     const logger: Logger = createLogger(eventMock, contextMock);
 
@@ -35,22 +57,27 @@ describe('Test logger', () => {
     );
   });
 
-  test('createLogger() should set the correlationId to awsRequestId when invoked without an X-Correlation-Id header',
-    () => {
-      const queryStringParameters: Record<string, string> = {};
-      const apiRequestId: string = v4();
-      const requestContext: APIGatewayEventRequestContext = <APIGatewayEventRequestContext> { requestId: apiRequestId };
-      const headers: Record<string, string> = {}; // no headers
-      const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent> { queryStringParameters, requestContext, headers };
-      const awsRequestId: string = v4();
-      const contextMock: Context = <Context> { awsRequestId };
+  test('createLogger() should set the correlationId to awsRequestId when invoked without an X-Correlation-Id header', () => {
+    const queryStringParameters: Record<string, string> = {};
+    const apiRequestId: string = v4();
+    const requestContext: APIGatewayEventRequestContext = <
+      APIGatewayEventRequestContext
+    >{ requestId: apiRequestId };
+    const headers: Record<string, string> = {}; // no headers
+    const eventMock: APIGatewayProxyEvent = <APIGatewayProxyEvent>{
+      queryStringParameters,
+      requestContext,
+      headers,
+    };
+    const awsRequestId: string = v4();
+    const contextMock: Context = <Context>{ awsRequestId };
 
-      const logger: Logger = createLogger(eventMock, contextMock);
+    const logger: Logger = createLogger(eventMock, contextMock);
 
-      expect(logger.logFormat).toBe(
-        `{ "apiRequestId": "${apiRequestId}", "correlationId": "${awsRequestId}", "message": "%s" }`,
-      );
-    });
+    expect(logger.logFormat).toBe(
+      `{ "apiRequestId": "${apiRequestId}", "correlationId": "${awsRequestId}", "message": "%s" }`,
+    );
+  });
 
   test('logger.trace() calls console.trace() with expected parameters', () => {
     const logger: Logger = new Logger('', '');

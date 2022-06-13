@@ -25,7 +25,7 @@ We recommended the following branch naming, for a new feature use `feature/<issu
 We don't squash merge to preserve the history of the work so always write clear log message for your commits. You can squash commits if you feel they could be tidied up. One-line messages are fine for small changes, but bigger changes should look like this:
 
     $ git commit -m "A brief summary of the commit
-    > 
+    >
     > A paragraph describing what changed and its impact."
 
 Here's a [handy resource](https://github.com/alphagov/styleguides/blob/master/git.md) for writing good commit messages and general git housekeeping.

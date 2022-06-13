@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "@dvsa/eslint-config-ts"
-  ],
+  "extends": ["@dvsa/eslint-config-ts"],
   "settings": {
     "import/resolver": {
       "typescript": {

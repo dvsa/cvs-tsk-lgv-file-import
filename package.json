@@ -1,18 +1,29 @@
 {
-  "name": "dvsa-lambda-starter",
+  "name": "cvs-tsk-enquiry-evl-file-push",
   "version": "1.1.0",
-  "description": "A package to act as a starter for typescript lambdas",
+  "description": "Gets, packages, and sends the EVL data file.",
   "main": "index.js",
   "scripts": {
+    "start": "sam local start-lambda",
+    "build": "tsc --rootDir ./ --outDir .build --sourceMap false && npm run build:copy",
+    "build:copy": "find src -type f \\( -name \"*.yml\" -or -name \"*.json\" \\) | cpio -pdm .build && find tests -type f \\( -name \"*.yml\" -or -name \"*.json\" \\)  | cpio -pdm .build",
+    "test": "jest --coverage --runInBand",
+    "test:ci": "jest --ci --runInBand",
+    "test-i": "echo 'nothing to do for now'",
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "lint:ci": "eslint '*/**/*.ts'",
-    "test": "jest --coverage",
-    "test:ci": "jest --ci",
-    "build:dev": "NODE_ENV=development webpack-cli --config webpack/webpack.development.js",
-    "watch:dev": "NODE_ENV=development webpack-cli --config webpack/webpack.development.watch.js",
-    "build:prod": "webpack-cli --config webpack/webpack.production.js",
-    "start:dev": "sam local start-api",
-    "invoke": "sam local invoke"
+    "format": "prettier --write .",
+    "audit": "npm audit",
+    "sonar-scanner": "sonar-scanner",
+    "security-checks": "git secrets --scan",
+    "package": "mkdir ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production --ignore-scripts && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip . && cd .. && rimraf ${ZIP_NAME}",
+    "prepare": "husky install",
+    "tools-setup": "echo 'nothing to do for now'",
+    "invoke": "sam local invoke S3EventFunction -e tests/resources/s3event.json",
+    "commit-msg": "commitlint --edit",
+    "pre-commit": "npm run security-checks && npm run audit && npm run format && npm run lint",
+    "predeploy": "npm install && npm run prepush",
+    "prepush": "npm run test && npm run build && npm run test-i"
   },
   "contributors": [
     {
@@ -25,29 +36,42 @@
     "aws-sdk": "^2.1001.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@dvsa/eslint-config-ts": "^2.3.0",
     "@types/aws-lambda": "^8.10.78",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.2",
     "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
     "archiver": "^5.3.0",
-    "aws-sam-webpack-plugin": "^0.11.0",
+    "commitlint-plugin-function-rules": "^1.7.1",
     "current-git-branch": "^1.1.0",
     "dotenv": "^16.0.0",
+    "esbuild": "^0.14.43",
     "eslint": "^7.32.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-security": "^1.5.0",
     "fs-extra": "^10.0.0",
+    "husky": "^8.0.1",
     "jest": "^27.2.4",
+    "jest-sonar-reporter": "^2.0.0",
+    "prettier": "^2.6.2",
     "source-map-support": "^0.5.19",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.3",
-    "uuid": "^8.3.2",
-    "webpack": "^5.56.1",
-    "webpack-cli": "^4.8.0",
-    "webpack-merge": "^5.8.0"
+    "uuid": "^8.3.2"
   },
   "engines": {
     "node": "^14.17.3"
+  },
+  "jestSonar": {
+    "reportPath": ".reports",
+    "reportFile": "test-report.xml",
+    "indent": 4
   }
 }
