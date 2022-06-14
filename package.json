@@ -33,7 +33,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.1001.0"
+    "@types/md5": "^2.3.2",
+    "@types/tar": "^6.1.1",
+    "aws-sdk": "^2.1001.0",
+    "md5": "^2.3.0",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
