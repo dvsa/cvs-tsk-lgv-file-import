@@ -11,20 +11,15 @@
         "--runInBand"
       ],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "port": 9229
+      "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "S3EventFunction",
+      "name": "Debug Serverless Offline",
       "type": "node",
-      "request": "attach",
-      "address": "localhost",
-      "port": 5858,
-      "localRoot": "${workspaceRoot}/.aws-sam/build/S3EventFunction",
-      "remoteRoot": "/var/task",
-      "protocol": "inspector",
-      "stopOnEntry": false,
-      "sourceMaps": true
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug"]
     }
   ]
 }

@@ -1,6 +1,7 @@
 import 'dotenv/config';
-import type { Context, S3Event } from 'aws-lambda';
-import { createLogger, Logger } from '../util/logger';
+import type { S3Event, S3EventRecord } from 'aws-lambda';
+import logger from '../util/logger';
+import { filePull } from '../filePull/fromS3';
 
 /**
  * Lambda Handler
@@ -11,15 +12,15 @@ import { createLogger, Logger } from '../util/logger';
  */
 export const handler = async (
   event: S3Event,
-  context: Context,
 ): Promise<Record<string, unknown>> => {
-  const bucketName = event.Records[0].s3.bucket.name;
-  const logger: Logger = createLogger(null, context);
+  const record: S3EventRecord = event.Records[0];
+  const evlFile: Buffer = await filePull(record);
+  const fileContent = evlFile.toString();
 
-  logger.info(`Triggered with ${bucketName}`);
+  logger.debug(`File contents ${fileContent}`);
 
   return Promise.resolve({
     statusCode: 200,
-    body: `Triggered with ${bucketName}`,
+    body: `File contents ${fileContent}`,
   });
 };

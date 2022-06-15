@@ -4,8 +4,11 @@ import * as zlib from 'zlib';
 import md5 from 'md5';
 
 describe('test the file config', () => {
-
-  const formattedDate = new Date().toLocaleDateString('en-GB').split('/').reverse().join('');
+  const formattedDate = new Date()
+    .toLocaleDateString('en-GB')
+    .split('/')
+    .reverse()
+    .join('');
   const txtFilename = 'crc32_' + formattedDate + '.txt';
   const zipCsvFilename = 'EVL_GVT_' + formattedDate + '.csv.gz';
   const csvFilename = 'EVL_GVT_' + formattedDate + '.csv';
@@ -54,7 +57,7 @@ describe('test the file config', () => {
   });
 });
 
-describe('test the file config failure condition', () => { 
+describe('test the file config failure condition', () => {
   test('no file found throws an error', async () => {
     try {
       await configureFile('badfilename.txt');
@@ -64,4 +67,3 @@ describe('test the file config failure condition', () => {
     }
   });
 });
-

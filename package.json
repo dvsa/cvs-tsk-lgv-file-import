@@ -4,7 +4,7 @@
   "description": "Gets, packages, and sends the EVL data file.",
   "main": "index.js",
   "scripts": {
-    "start": "sam local start-lambda",
+    "start": "BRANCH=local serverless offline start",
     "build": "tsc --rootDir ./ --outDir .build --sourceMap false && npm run build:copy",
     "build:copy": "find src -type f \\( -name \"*.yml\" -or -name \"*.json\" \\) | cpio -pdm .build && find tests -type f \\( -name \"*.yml\" -or -name \"*.json\" \\)  | cpio -pdm .build",
     "test": "jest --coverage --runInBand",
@@ -14,12 +14,12 @@
     "lint:ci": "eslint '*/**/*.ts'",
     "format": "prettier --write .",
     "audit": "npm audit",
-    "sonar-scanner": "sonar-scanner",
+    "sonar-scanner": "npm run test && sonar-scanner",
     "security-checks": "git secrets --scan",
     "package": "mkdir ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production --ignore-scripts && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip . && cd .. && rimraf ${ZIP_NAME}",
     "prepare": "husky install",
     "tools-setup": "echo 'nothing to do for now'",
-    "invoke": "sam local invoke S3EventFunction -e tests/resources/s3event.json",
+    "debug": "serverless invoke local -f evlFilePush -p ./tests/resources/s3event.json",
     "commit-msg": "commitlint --edit",
     "pre-commit": "npm run security-checks && npm run audit && npm run format && npm run lint",
     "predeploy": "npm install && npm run prepush",
@@ -35,9 +35,10 @@
   "dependencies": {
     "@types/md5": "^2.3.2",
     "@types/tar": "^6.1.1",
-    "aws-sdk": "^2.1001.0",
+    "aws-sdk": "^2.1153.0",
     "md5": "^2.3.0",
-    "tar": "^6.1.11"
+    "tar": "^6.1.11",
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
@@ -64,11 +65,13 @@
     "jest": "^27.2.4",
     "jest-sonar-reporter": "^2.0.0",
     "prettier": "^2.6.2",
+    "serverless": "^3.19.0",
+    "serverless-offline": "^8.8.0",
+    "serverless-plugin-typescript": "^2.1.2",
     "source-map-support": "^0.5.19",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.6",
-    "typescript": "^4.4.3",
-    "uuid": "^8.3.2"
+    "typescript": "^4.4.3"
   },
   "engines": {
     "node": "^14.17.3"

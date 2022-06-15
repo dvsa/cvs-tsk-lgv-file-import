@@ -1,41 +1,21 @@
-import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
+import { createLogger, format, transports } from 'winston';
 
-export class Logger {
-  logFormat: string;
+const { printf } = format;
 
-  constructor(apiRequestId: string, correlationId: string) {
-    this.logFormat = `{ "apiRequestId": "${apiRequestId}", "correlationId": "${correlationId}", "message": "%s" }`;
+const logFormat = printf((info) => {
+  // Checks if log is an error - has stack info
+  if (info.stack) {
+    return `${info.level}: ${info.stack as string}`;
   }
+  return `${info.level}: ${info.message}`;
+});
 
-  public trace(msg: string): void {
-    console.trace(this.logFormat, msg);
-  }
-
-  public debug(msg: string): void {
-    console.debug(this.logFormat, msg);
-  }
-
-  public info(msg: string): void {
-    console.info(this.logFormat, msg);
-  }
-
-  public warn(msg: string): void {
-    console.warn(this.logFormat, msg);
-  }
-
-  public error(msg: string): void {
-    console.error(this.logFormat, msg);
-  }
-}
-
-export const createLogger = (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Logger => {
-  const lambdaRequestId: string = context.awsRequestId;
-  const apiRequestId: string = event?.requestContext.requestId;
-  const correlationId: string =
-    event?.headers?.['X-Correlation-Id'] || lambdaRequestId;
-
-  return new Logger(apiRequestId, correlationId);
+const loggerConfig = {
+  level: process.env.LOG_LEVEL || 'info',
+  format: logFormat,
 };
+
+const logger = createLogger();
+logger.add(new transports.Console(loggerConfig));
+
+export default logger;

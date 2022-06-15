@@ -1,0 +1,22 @@
+service: cvs-tsk-enquiry-evl-file-push
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  evlFilePush:
+    handler: src/handler/s3Event.handler
+    events:
+      - s3:
+          bucket: evlFile
+          event: s3:ObjectCreated:*
+
+custom:
+  serverless-offline:
+    port: 3014
