@@ -29,6 +29,8 @@ import type { S3Event } from 'aws-lambda';
 import { GetObjectOutput } from 'aws-sdk/clients/s3';
 import { handler } from '../../src/handler/s3Event';
 import * as fs from 'fs';
+import * as filePush from '../../src/filePush/filePush';
+
 
 describe('Test S3 Event Lambda Function', () => {
 
@@ -47,7 +49,16 @@ describe('Test S3 Event Lambda Function', () => {
     fs.unlinkSync(txtFilename);
   });
 
-  test('should return 200 with the file content', async () => {
+  test('should return 204', async () => {
+    jest.spyOn(filePush, 'createConfig').mockImplementation(() => { 
+      const config = {
+        host: process.env.SFTP_Host,
+        username: process.env.SFTP_User,
+        retries: 3, 
+        password: 'testPassword',
+      };
+      return config; 
+    });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
