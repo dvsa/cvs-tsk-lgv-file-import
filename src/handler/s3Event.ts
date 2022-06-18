@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import type { S3Event } from 'aws-lambda';
 import logger from '../util/logger';
 import { filePull } from '../filePull/fromS3';

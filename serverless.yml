@@ -1,4 +1,5 @@
 service: cvs-tsk-enquiry-evl-file-push
+useDotenv: true
 
 plugins:
   - serverless-offline
