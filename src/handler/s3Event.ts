@@ -1,8 +1,10 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
+import * as fs from 'fs';
 import type { S3Event } from 'aws-lambda';
-import logger from '../util/logger';
-import { filePull } from '../filePull/fromS3';
 import { configureFile } from '../fileConvert/fileConvert';
+import { filePull } from '../filePull/fromS3';
 import { filePush } from '../filePush/filePush';
+import { randomUUID } from 'crypto';
 
 /**
  * Lambda Handler
@@ -14,13 +16,16 @@ import { filePush } from '../filePush/filePush';
 export const handler = async (
   event: S3Event,
 ): Promise<Record<string, unknown>> => {
-  const record = event.Records[0];
-  const evlFile = await filePull(record);
-  logger.info(`File contents ${evlFile.toString()}`);
-  const filename = await configureFile(evlFile);
-  logger.info('Wrote out file');
-  await filePush(filename);
-  logger.info('Uploaded file to SFTP');
+  const workingDir = `./tmp/${randomUUID()}/`;
+  try {
+    fs.mkdirSync(workingDir);
+    const record = event.Records[0];
+    const evlFile = await filePull(record);
+    const filename = await configureFile(workingDir, evlFile);
+    await filePush(filename);
+  } finally {
+    fs.rmSync(workingDir, { recursive: true, force: true });
+  }
 
   return Promise.resolve({
     statusCode: 204,

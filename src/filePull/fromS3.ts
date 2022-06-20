@@ -21,7 +21,6 @@ export const filePull = async (record: S3EventRecord) => {
   };
   try {
     const s3Object: GetObjectOutput = await s3.getObject(params).promise();
-    logger.info(`File pulled with ETag: ${s3Object.ETag}`);
     if (s3Object.ContentType !== 'text/csv') {
       throw new Error(
         `File with ETag ${s3Object.ETag} has content type of '${s3Object.ContentType}' rather than 'text/csv'.`,
@@ -33,6 +32,7 @@ export const filePull = async (record: S3EventRecord) => {
       );
     }
 
+    logger.info(`${key} pulled successfully.`);
     return s3Object.Body;
   } catch (err) {
     logger.error(err);

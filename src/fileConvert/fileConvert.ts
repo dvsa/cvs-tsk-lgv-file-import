@@ -5,7 +5,10 @@ import * as fs from 'fs';
 import * as zlib from 'zlib';
 import logger from '../util/logger';
 
-export const configureFile = async (bufferInput: Buffer) => {
+export const configureFile = async (
+  workingDir: string,
+  bufferInput: Buffer,
+) => {
   const recordInfoHeader = 'HEADER LINE: ';
   const description = 'EVL GVT TRANSFER FILE ';
   const options: Intl.DateTimeFormatOptions = {
@@ -27,9 +30,12 @@ export const configureFile = async (bufferInput: Buffer) => {
     .split('/')
     .reverse()
     .join('');
-  const zipCsvFilename = archiveNamePrefix + formattedDate + '.csv.gz';
-  const textFilename = textFilenamePrefix + formattedDate + '.txt';
-  const archiveName = archiveNamePrefix + formattedDate + '.tar.gz';
+  const zipCsvFilename =
+    workingDir + archiveNamePrefix + formattedDate + '.csv.gz';
+  const textFilename =
+    workingDir + textFilenamePrefix + formattedDate + '.txt';
+  const archiveName =
+    workingDir + archiveNamePrefix + formattedDate + '.tar.gz';
 
   try {
     const data = bufferInput.toString().split('\n');

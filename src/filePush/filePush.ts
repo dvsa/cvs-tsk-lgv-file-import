@@ -34,9 +34,7 @@ export const createConfig = () => {
 
 export const filePush = async (filename: string) => {
   const config = createConfig();
-
   const sftp = new Client();
-
   const remoteFileLocation = process.env.SFTP_Path + filename;
 
   await sftp

@@ -27,25 +27,25 @@ describe('test the file config', () => {
   });
 
   test('expect filename to be correct', async () => {
-    await configureFile(buffer);
+    await configureFile('', buffer);
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(finalFilename);
   });
 
   test('expect csv filename to be correct', async () => {
-    await configureFile(buffer);
+    await configureFile('', buffer);
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(zipCsvFilename);
   });
 
   test('expect txt filename to be correct', async () => {
-    await configureFile(buffer);
+    await configureFile('', buffer);
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(txtFilename);
   });
 
   test('expect csv to include the header and footer', async () => {
-    await configureFile(buffer);
+    await configureFile('', buffer);
     const zipCsvFile = fs.readFileSync(zipCsvFilename);
     const csvFile = zlib.gunzipSync(zipCsvFile);
     const csvData = csvFile.toString();
@@ -54,7 +54,7 @@ describe('test the file config', () => {
   });
 
   test('expect hash to match', async () => {
-    await configureFile(buffer);
+    await configureFile('', buffer);
     const csvFile = fs.readFileSync(zipCsvFilename);
     const textFile = fs.readFileSync(txtFilename);
     const hash = md5(csvFile);
@@ -64,7 +64,7 @@ describe('test the file config', () => {
 
 describe('test the file config failure condition', () => {
   test('no data provided throws an error', async () => {
-    await expect(configureFile(Buffer.from(''))).rejects.toThrow(
+    await expect(configureFile('', Buffer.from(''))).rejects.toThrow(
       'No data provided',
     );
   });

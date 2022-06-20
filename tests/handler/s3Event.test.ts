@@ -28,25 +28,9 @@ import event from '../resources/s3event.json';
 import type { S3Event } from 'aws-lambda';
 import { GetObjectOutput } from 'aws-sdk/clients/s3';
 import { handler } from '../../src/handler/s3Event';
-import * as fs from 'fs';
 import * as filePush from '../../src/filePush/filePush';
 
 describe('Test S3 Event Lambda Function', () => {
-  const formattedDate = new Date()
-    .toLocaleDateString('en-GB')
-    .split('/')
-    .reverse()
-    .join('');
-  const txtFilename = 'crc32_' + formattedDate + '.txt';
-  const zipCsvFilename = 'EVL_GVT_' + formattedDate + '.csv.gz';
-  const finalFilename = 'EVL_GVT_' + formattedDate + '.tar.gz';
-
-  afterAll(() => {
-    fs.unlinkSync(finalFilename);
-    fs.unlinkSync(zipCsvFilename);
-    fs.unlinkSync(txtFilename);
-  });
-
   test('should return 204', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
