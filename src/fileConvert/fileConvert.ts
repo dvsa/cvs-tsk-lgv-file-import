@@ -32,8 +32,7 @@ export const configureFile = async (
     .join('');
   const zipCsvFilename =
     workingDir + archiveNamePrefix + formattedDate + '.csv.gz';
-  const textFilename =
-    workingDir + textFilenamePrefix + formattedDate + '.txt';
+  const textFilename = workingDir + textFilenamePrefix + formattedDate + '.txt';
   const archiveName =
     workingDir + archiveNamePrefix + formattedDate + '.tar.gz';
 

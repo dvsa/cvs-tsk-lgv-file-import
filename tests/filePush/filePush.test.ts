@@ -38,7 +38,7 @@ describe('test the push to SFTP server', () => {
 describe('test the create config function', () => {
   afterEach(() => {
     delete process.env.SFTP_Password;
-    delete process.env.SFTP_PrivateKey;
+    delete process.env.SFTP_Key;
   });
 
   test('the config is correct with just a password supplied', () => {
@@ -55,7 +55,7 @@ describe('test the create config function', () => {
   });
 
   test('the config is correct with just a privateKey supplied', () => {
-    process.env.SFTP_PrivateKey = 'privateKey';
+    process.env.SFTP_Key = 'privateKey';
     const config = createConfig();
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
@@ -69,7 +69,7 @@ describe('test the create config function', () => {
 
   test('the config is correct with both a privateKey and password supplied', () => {
     process.env.SFTP_Password = 'testPassword';
-    process.env.SFTP_PrivateKey = 'privateKey';
+    process.env.SFTP_Key = 'privateKey';
     const config = createConfig();
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,

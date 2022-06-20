@@ -16,8 +16,8 @@ export const createConfig = () => {
     retries: 3,
   };
 
-  if (process.env.SFTP_PrivateKey && process.env.SFTP_PrivateKey != '') {
-    config.privateKey = process.env.SFTP_PrivateKey;
+  if (process.env.SFTP_Key && process.env.SFTP_Key != '') {
+    config.privateKey = process.env.SFTP_Key;
   } else if (process.env.SFTP_Password && process.env.SFTP_Password != '') {
     config.password = process.env.SFTP_Password;
   } else {
