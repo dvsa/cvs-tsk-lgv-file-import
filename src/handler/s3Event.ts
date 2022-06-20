@@ -16,7 +16,7 @@ import { randomUUID } from 'crypto';
 export const handler = async (
   event: S3Event,
 ): Promise<Record<string, unknown>> => {
-  const workingDir = `./tmp/${randomUUID()}/`;
+  const workingDir = `/tmp/${randomUUID()}/`;
   try {
     fs.mkdirSync(workingDir);
     const record = event.Records[0];
