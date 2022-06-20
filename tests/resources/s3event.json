@@ -20,14 +20,14 @@
         "s3SchemaVersion": "1.0",
         "configurationId": "7ddea92e-cee0-431e-a05b-d2d00b8650ce",
         "bucket": {
-          "name": "s3-lambda-testing-7654",
+          "name": "evl-bucket",
           "ownerIdentity": {
             "principalId": "A3P1HWYVAMJVPS"
           },
-          "arn": "arn:aws:s3:::s3-lambda-testing-7654"
+          "arn": "arn:aws:s3:::evl-bucket"
         },
         "object": {
-          "key": "EVL_GVT_FILE.csv",
+          "key": "EVL_GVT_TESTFILE.csv",
           "size": 60,
           "eTag": "c4c7b60167b533a5eae07b5ce38d7368",
           "sequencer": "0062A84E310AE821DE"

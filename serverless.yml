@@ -4,9 +4,8 @@ useDotenv: true
 plugins:
   - serverless-offline
   - serverless-plugin-typescript
-
+  - serverless-s3-local
 provider:
-  lambdaHashingVersion: 20201221
   name: aws
   runtime: nodejs14.x
 
@@ -15,9 +14,12 @@ functions:
     handler: src/handler/s3Event.handler
     events:
       - s3:
-          bucket: evlFile
+          bucket: evl-bucket
           event: s3:ObjectCreated:*
 
 custom:
   serverless-offline:
     port: 3014
+  s3:
+    host: localhost
+    port: 4569

@@ -1,7 +1,7 @@
 import Client from 'ssh2-sftp-client';
 import logger from '../util/logger';
 
-export interface Config { 
+export interface Config {
   host: string;
   username: string;
   retries: number;
@@ -10,11 +10,10 @@ export interface Config {
 }
 
 export const createConfig = () => {
-
   const config: Config = {
     host: process.env.SFTP_Address,
     username: process.env.SFTP_User,
-    retries: 3, 
+    retries: 3,
   };
 
   if (process.env.SFTP_PrivateKey && process.env.SFTP_PrivateKey != '') {
@@ -22,21 +21,24 @@ export const createConfig = () => {
   } else if (process.env.SFTP_Password && process.env.SFTP_Password != '') {
     config.password = process.env.SFTP_Password;
   } else {
-    logger.error('No password or private key found, please check the env variables');
-    throw new Error('No password or private key found, please check the env variables');
+    logger.error(
+      'No password or private key found, please check the env variables',
+    );
+    throw new Error(
+      'No password or private key found, please check the env variables',
+    );
   }
 
   return config;
 };
 
 export const filePush = async (filename: string) => {
-
   const config = createConfig();
-  
+
   const sftp = new Client();
 
   const remoteFileLocation = process.env.SFTP_Path + filename;
-  
+
   await sftp
     .connect(config)
     .then(() => sftp.fastPut(filename, remoteFileLocation))
@@ -48,5 +50,4 @@ export const filePush = async (filename: string) => {
       logger.error('', err);
       throw err;
     });
-
 };

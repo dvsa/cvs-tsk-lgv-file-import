@@ -21,7 +21,7 @@ export const handler = async (
   logger.info('Wrote out file');
   await filePush(filename);
   logger.info('Uploaded file to SFTP');
-  
+
   return Promise.resolve({
     statusCode: 204,
   });

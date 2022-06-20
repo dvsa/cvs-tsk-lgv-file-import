@@ -12,10 +12,10 @@ jest.mock('aws-sdk', () => {
 });
 
 jest.mock('ssh2-sftp-client', () => {
-  return { 
+  return {
     __esModule: true,
-    default: jest.fn().mockImplementation(() =>{
-      return { 
+    default: jest.fn().mockImplementation(() => {
+      return {
         connect: mockConnect,
         fastPut: mockFastPut,
         end: mockEnd,
@@ -31,9 +31,7 @@ import { handler } from '../../src/handler/s3Event';
 import * as fs from 'fs';
 import * as filePush from '../../src/filePush/filePush';
 
-
 describe('Test S3 Event Lambda Function', () => {
-
   const formattedDate = new Date()
     .toLocaleDateString('en-GB')
     .split('/')
@@ -50,14 +48,14 @@ describe('Test S3 Event Lambda Function', () => {
   });
 
   test('should return 204', async () => {
-    jest.spyOn(filePush, 'createConfig').mockImplementation(() => { 
+    jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
         host: process.env.SFTP_Host,
         username: process.env.SFTP_User,
-        retries: 3, 
+        retries: 3,
         password: 'testPassword',
       };
-      return config; 
+      return config;
     });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));

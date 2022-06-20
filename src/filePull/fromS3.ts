@@ -3,7 +3,14 @@ import { GetObjectOutput } from 'aws-sdk/clients/s3';
 import { S3 } from 'aws-sdk';
 import { S3EventRecord } from 'aws-lambda';
 
-const s3 = new S3({ region: process.env.AWS_REGION });
+const s3 = new S3(
+  (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
+    s3ForcePathStyle: true,
+    accessKeyId: 'S3RVER',
+    secretAccessKey: 'S3RVER',
+    endpoint: 'http://localhost:4569',
+  },
+);
 
 export const filePull = async (record: S3EventRecord) => {
   const bucket = record.s3.bucket.name;

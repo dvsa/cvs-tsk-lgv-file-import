@@ -14,12 +14,16 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Debug Serverless Offline",
-      "type": "node",
+      "command": "npm start",
+      "name": "Debug Start",
       "request": "launch",
-      "cwd": "${workspaceRoot}",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "debug"]
+      "type": "node-terminal"
+    },
+    {
+      "command": "npm debug",
+      "name": "Debug Invoke",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }

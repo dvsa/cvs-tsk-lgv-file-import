@@ -3,10 +3,10 @@ const mockFastPut = jest.fn();
 const mockEnd = jest.fn();
 
 jest.mock('ssh2-sftp-client', () => {
-  return { 
+  return {
     __esModule: true,
-    default: jest.fn().mockImplementation(() =>{
-      return { 
+    default: jest.fn().mockImplementation(() => {
+      return {
         connect: mockConnect,
         fastPut: mockFastPut,
         end: mockEnd,
@@ -29,13 +29,14 @@ describe('test the push to SFTP server', () => {
   test('should error and not allow me to push to sftp', async () => {
     process.env.SFTP_Password = 'testPassword';
     mockConnect.mockReturnValue(Promise.reject(new Error('no connection')));
-    await expect(filePush('fakefile.txt')).rejects.toThrow(new Error('no connection'));
+    await expect(filePush('fakefile.txt')).rejects.toThrow(
+      new Error('no connection'),
+    );
   });
 });
 
 describe('test the create config function', () => {
-
-  afterEach(() =>{
+  afterEach(() => {
     delete process.env.SFTP_Password;
     delete process.env.SFTP_PrivateKey;
   });
@@ -46,10 +47,10 @@ describe('test the create config function', () => {
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
-      retries: 3, 
+      retries: 3,
       password: 'testPassword',
     };
-    
+
     expect(config).toStrictEqual(expectedConfig);
   });
 
@@ -59,7 +60,7 @@ describe('test the create config function', () => {
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
-      retries: 3, 
+      retries: 3,
       privateKey: 'privateKey',
     };
 
@@ -73,7 +74,7 @@ describe('test the create config function', () => {
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
-      retries: 3, 
+      retries: 3,
       privateKey: 'privateKey',
     };
 
@@ -86,8 +87,10 @@ describe('test the create config function', () => {
     try {
       createConfig();
     } catch (error) {
-      expect(error).toHaveProperty('message', 'No password or private key found, please check the env variables');
+      expect(error).toHaveProperty(
+        'message',
+        'No password or private key found, please check the env variables',
+      );
     }
   });
 });
-
