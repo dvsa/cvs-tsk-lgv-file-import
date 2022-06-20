@@ -1,5 +1,6 @@
 import Client from 'ssh2-sftp-client';
 import logger from '../util/logger';
+import path from 'path';
 
 export interface Config {
   host: string;
@@ -32,14 +33,14 @@ export const createConfig = () => {
   return config;
 };
 
-export const filePush = async (filename: string) => {
+export const filePush = async (filepath: string) => {
   const config = createConfig();
   const sftp = new Client();
-  const remoteFileLocation = process.env.SFTP_Path + filename;
+  const remoteFileLocation = (process.env.SFTP_Path ?? '') + path.basename(filepath);
 
   await sftp
     .connect(config)
-    .then(() => sftp.fastPut(filename, remoteFileLocation))
+    .then(() => sftp.fastPut(filepath, remoteFileLocation))
     .then(() => {
       logger.info('Successfully uploaded to SFTP');
       return sftp.end();

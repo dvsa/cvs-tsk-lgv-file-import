@@ -21,8 +21,8 @@ export const handler = async (
     fs.mkdirSync(workingDir);
     const record = event.Records[0];
     const evlFile = await filePull(record);
-    const filename = await configureFile(workingDir, evlFile);
-    await filePush(filename);
+    const filepath = await configureFile(workingDir, evlFile);
+    await filePush(filepath);
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
   }
