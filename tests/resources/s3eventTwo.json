@@ -1,0 +1,73 @@
+{
+    "Records": [
+      {
+        "eventVersion": "2.1",
+        "eventSource": "aws:s3",
+        "awsRegion": "eu-west-1",
+        "eventTime": "2022-06-14T09:00:33.057Z",
+        "eventName": "ObjectCreated:Put",
+        "userIdentity": {
+          "principalId": "A3P1HWYVAMJVPS"
+        },
+        "requestParameters": {
+          "sourceIPAddress": "154.14.88.250"
+        },
+        "responseElements": {
+          "x-amz-request-id": "85Z8PWW9S14ZMK84",
+          "x-amz-id-2": "1scBcvA4LhGXb00tEqxFG4+U2rDj2MGRfZBI5sE/29QvWEjdl53ZmrIedC1+hZzEbUCOwLqHF1b85gpvglqII1iBdyRf7pso"
+        },
+        "s3": {
+          "s3SchemaVersion": "1.0",
+          "configurationId": "7ddea92e-cee0-431e-a05b-d2d00b8650ce",
+          "bucket": {
+            "name": "evl-bucket",
+            "ownerIdentity": {
+              "principalId": "A3P1HWYVAMJVPS"
+            },
+            "arn": "arn:aws:s3:::evl-bucket"
+          },
+          "object": {
+            "key": "EVL_GVT_20220621.csv",
+            "size": 60,
+            "eTag": "c4c7b60167b533a5eae07b5ce38d7368",
+            "sequencer": "0062A84E310AE821DE"
+          }
+        }
+      },
+      {
+        "eventVersion": "2.1",
+        "eventSource": "aws:s3",
+        "awsRegion": "eu-west-1",
+        "eventTime": "2022-06-11T15:38:51.087Z",
+        "eventName": "ObjectCreated:Put",
+        "userIdentity": {
+          "principalId": "A3P1HWYVAMJVPS"
+        },
+        "requestParameters": {
+          "sourceIPAddress": "51.199.204.51"
+        },
+        "responseElements": {
+          "x-amz-request-id": "0F2179V9NC3972GE",
+          "x-amz-id-2": "0sHV2E/eqOllDAbcj3FyC3ohfNqQEsseo7u6QjIvNZQdiasRo/KSXRy++faoQ7VQgth0rf+ghREyjl00stldaJmjryJJ6hQJ"
+        },
+        "s3": {
+          "s3SchemaVersion": "1.0",
+          "configurationId": "7ddea92e-cee0-431e-a05b-d2d00b8650ce",
+          "bucket": {
+            "name": "s3-lambda-testing-7654",
+            "ownerIdentity": {
+              "principalId": "A3P1HWYVAMJVPS"
+            },
+            "arn": "arn:aws:s3:::s3-lambda-testing-7654"
+          },
+          "object": {
+            "key": "EVL_GVT_20220622.csv",
+            "size": 4843914,
+            "eTag": "8985c094590073808e05ab2576afe3a4",
+            "sequencer": "0062A4B70B002FF40A"
+          }
+        }
+      }
+    ]
+  }
+  
