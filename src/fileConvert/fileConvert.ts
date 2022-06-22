@@ -8,6 +8,7 @@ import logger from '../util/logger';
 export const configureFile = async (
   workingDir: string,
   bufferInput: Buffer,
+  filename: string,
 ) => {
   const recordInfoHeader = 'HEADER LINE: ';
   const description = 'EVL GVT TRANSFER FILE ';
@@ -25,16 +26,12 @@ export const configureFile = async (
   const vrmsExtracted = 'RECORDS.';
   const textFilenamePrefix = 'crc32_';
   const archiveNamePrefix = 'EVL_GVT_';
-  const formattedDate = new Date()
-    .toLocaleDateString('en-GB')
-    .split('/')
-    .reverse()
-    .join('');
+  const dateFromFilename = filename.split('_')[2].split('.')[0];
   const zipCsvFilename =
-    workingDir + archiveNamePrefix + formattedDate + '.csv.gz';
-  const textFilename = workingDir + textFilenamePrefix + formattedDate + '.txt';
+    workingDir + archiveNamePrefix + dateFromFilename + '.csv.gz';
+  const textFilename = workingDir + textFilenamePrefix + dateFromFilename + '.txt';
   const archiveName =
-    workingDir + archiveNamePrefix + formattedDate + '.tar.gz';
+    workingDir + archiveNamePrefix + dateFromFilename + '.tar.gz';
 
   try {
     const data = bufferInput.toString().split('\n');

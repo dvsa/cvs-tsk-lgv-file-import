@@ -20,9 +20,14 @@ describe('Test pull file from S3', () => {
     };
     mockS3.promise.mockResolvedValueOnce(getObjectOutput);
     const eventMock: S3Event = event as S3Event;
-    const evlFile: Buffer = await filePull(eventMock.Records[0]);
+    const evlFileData = await filePull(eventMock.Records[0]);
 
-    expect(evlFile.toString()).toEqual(getObjectOutput.Body?.toString());
+    const expectedEvlFileData = {
+      data: getObjectOutput.Body,
+      filename: 'EVL_GVT_20220621.csv',
+    };
+
+    expect(evlFileData).toStrictEqual(expectedEvlFileData);
   });
 
   test('should return error if not text/csv', async () => {

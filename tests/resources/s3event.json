@@ -27,7 +27,7 @@
           "arn": "arn:aws:s3:::evl-bucket"
         },
         "object": {
-          "key": "EVL_GVT_TESTFILE.csv",
+          "key": "EVL_GVT_20220621.csv",
           "size": 60,
           "eTag": "c4c7b60167b533a5eae07b5ce38d7368",
           "sequencer": "0062A84E310AE821DE"

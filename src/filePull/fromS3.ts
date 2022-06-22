@@ -33,7 +33,11 @@ export const filePull = async (record: S3EventRecord) => {
     }
 
     logger.info(`${key} pulled successfully.`);
-    return s3Object.Body;
+
+    return {
+      data: s3Object.Body,
+      filename: key, 
+    };
   } catch (err) {
     logger.error(err);
     const message = `Error getting object ${key} from bucket ${bucket}. Make sure they exist and your bucket is in the same region as this function.`;

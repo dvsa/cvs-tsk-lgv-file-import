@@ -20,8 +20,8 @@ export const handler = async (
   try {
     fs.mkdirSync(workingDir);
     const record = event.Records[0];
-    const evlFile = await filePull(record);
-    const filepath = await configureFile(workingDir, evlFile);
+    const evlFileData = await filePull(record);
+    const filepath = await configureFile(workingDir, evlFileData.data, evlFileData.filename);
     await filePush(filepath);
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
