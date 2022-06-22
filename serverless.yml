@@ -6,6 +6,7 @@ plugins:
   - serverless-plugin-typescript
   - serverless-s3-local
 provider:
+  region: eu-west-1
   name: aws
   runtime: nodejs14.x
 

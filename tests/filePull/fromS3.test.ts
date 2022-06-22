@@ -40,7 +40,7 @@ describe('Test pull file from S3', () => {
 
     await expect(async () => {
       await filePull(eventMock.Records[0]);
-    }).rejects.toThrowError(
+    }).rejects.toThrow(
       "File with ETag undefined has content type of 'text/json' rather than 'text/csv'.",
     );
   });
@@ -56,7 +56,7 @@ describe('Test pull file from S3', () => {
 
     await expect(async () => {
       await filePull(eventMock.Records[0]);
-    }).rejects.toThrowError(
+    }).rejects.toThrow(
       'Body of object with ETag c4c7b60167b533a5eae07b5ce38d7368 is not a Buffer.',
     );
   });

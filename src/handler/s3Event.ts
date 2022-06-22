@@ -12,12 +12,15 @@ const handleEvent = async (record: S3EventRecord) => {
   try {
     fs.mkdirSync(workingDir);
     const evlFileData = await filePull(record);
-    const filepath = await configureFile(workingDir, evlFileData.data, evlFileData.filename);
+    const filepath = await configureFile(
+      workingDir,
+      evlFileData.data,
+      evlFileData.filename,
+    );
     await filePush(filepath);
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
   }
-
 };
 
 /**
@@ -30,13 +33,14 @@ const handleEvent = async (record: S3EventRecord) => {
 export const handler = async (
   event: S3Event,
 ): Promise<Record<string, unknown>> => {
-
   for (const record of event.Records) {
     try {
       await handleEvent(record);
-    } catch  (err) {
+    } catch (err) {
       logger.error(err);
-      logger.error(`The file ${record.s3.object.key} failed somewhere, 500 was returned.`);
+      logger.error(
+        `The file ${record.s3.object.key} failed somewhere, 500 was returned.`,
+      );
       return Promise.resolve({
         statusCode: 500,
       });

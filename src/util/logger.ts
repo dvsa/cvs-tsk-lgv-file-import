@@ -7,7 +7,7 @@ const logFormat = printf((info) => {
   if (info.stack) {
     return `${info.level}: ${info.stack as string}`;
   }
-  return `${info.level}: ${info.message}`;
+  return `${info.level}: ${info.message as string}`;
 });
 
 const loggerConfig = {

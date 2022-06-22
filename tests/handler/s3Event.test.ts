@@ -40,7 +40,7 @@ describe('Test S3 Event Lambda Function', () => {
         retries: 3,
         password: 'testPassword',
       };
-      return config;
+      return Promise.resolve(config);
     });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
@@ -65,7 +65,7 @@ describe('Test S3 Event Lambda Function', () => {
         retries: 3,
         password: 'testPassword',
       };
-      return config;
+      return Promise.resolve(config);
     });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
@@ -90,7 +90,7 @@ describe('Test S3 Event Lambda Function', () => {
         retries: 3,
         password: 'testPassword',
       };
-      return config;
+      return Promise.resolve(config);
     });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));

@@ -36,7 +36,7 @@ export const filePull = async (record: S3EventRecord) => {
 
     return {
       data: s3Object.Body,
-      filename: key, 
+      filename: key,
     };
   } catch (err) {
     logger.error(err);

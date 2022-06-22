@@ -6,7 +6,10 @@ import md5 from 'md5';
 
 describe('test the file config', () => {
   const testFilename = 'tests/resources/EVL_GVT_20220621.csv';
-  const dateFromFilename = testFilename.split('/')[2].split('_')[2].split('.')[0];
+  const dateFromFilename = testFilename
+    .split('/')[2]
+    .split('_')[2]
+    .split('.')[0];
   const txtFilename = 'crc32_' + dateFromFilename + '.txt';
   const zipCsvFilename = 'EVL_GVT_' + dateFromFilename + '.csv.gz';
   const finalFilename = 'EVL_GVT_' + dateFromFilename + '.tar.gz';
@@ -61,8 +64,8 @@ describe('test the file config', () => {
 
 describe('test the file config failure condition', () => {
   test('no data provided throws an error', async () => {
-    await expect(configureFile('', Buffer.from(''), 'EVL_GVT_20220621.csv')).rejects.toThrow(
-      'No data provided',
-    );
+    await expect(
+      configureFile('', Buffer.from(''), 'EVL_GVT_20220621.csv'),
+    ).rejects.toThrow('No data provided');
   });
 });
