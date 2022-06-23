@@ -66,8 +66,8 @@ export const configureFile = async (
     logger.info('Written tar file');
     return archiveName;
   } catch (err) {
-    logger.error(err);
-    logger.error('Failed in file converting');
+    logger.error('', err);
+    logger.error('', 'Failed in file converting');
     throw err;
   }
 };

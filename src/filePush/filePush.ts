@@ -26,6 +26,7 @@ export const createConfig = async () => {
     config.password = sftpPassword;
   } else {
     logger.error(
+      '',
       'No password or private key found, please check the env variables',
     );
     throw new Error(
@@ -42,15 +43,13 @@ export const filePush = async (filepath: string) => {
   const remoteFileLocation =
     (process.env.SFTP_Path ?? '') + path.basename(filepath);
 
-  await sftp
-    .connect(config)
-    .then(() => sftp.fastPut(filepath, remoteFileLocation))
-    .then(() => {
-      logger.info('Successfully uploaded to SFTP');
-      return sftp.end();
-    })
-    .catch((err) => {
-      logger.error('', err);
-      throw err;
-    });
+  try {
+    await sftp.connect(config);
+    await sftp.fastPut(filepath, remoteFileLocation);
+    logger.info('Successfully uploaded to SFTP');
+    return await sftp.end();
+  } catch (err) {
+    logger.error('', err);
+    throw err;
+  }
 };
