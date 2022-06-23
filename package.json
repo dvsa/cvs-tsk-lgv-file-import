@@ -47,7 +47,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
-    "@dvsa/eslint-config-ts": "^2.3.0",
+    "@dvsa/eslint-config-ts": "^2.4.0",
     "@types/aws-lambda": "^8.10.78",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.2",
@@ -63,6 +63,7 @@
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-security": "^1.5.0",
     "fs-extra": "^10.0.0",
     "husky": "^8.0.1",
