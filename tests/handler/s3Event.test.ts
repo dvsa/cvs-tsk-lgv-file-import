@@ -90,7 +90,7 @@ describe('Test S3 Event Lambda Function', () => {
         retries: 3,
         password: 'testPassword',
       };
-      return Promise.resolve(config);
+      return Promise.reject(config);
     });
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
@@ -107,8 +107,8 @@ describe('Test S3 Event Lambda Function', () => {
     mockS3.promise.mockResolvedValueOnce(getObjectOutputBroken);
     const eventMock: S3Event = eventTwo as S3Event;
 
-    const res: Record<string, unknown> = await handler(eventMock);
-
-    expect(res.statusCode).toBe(500);
+    await expect(handler(eventMock)).rejects.toBe(
+      'The file EVL_GVT_20220621.csv errored during processing.',
+    );
   });
 });

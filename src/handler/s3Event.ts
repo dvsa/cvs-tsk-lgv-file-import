@@ -38,12 +38,9 @@ export const handler = async (
       await handleEvent(record);
     } catch (err) {
       logger.error(err);
-      logger.error(
+      return Promise.reject(
         `The file ${record.s3.object.key} errored during processing.`,
       );
-      return Promise.reject({
-        statusCode: 500,
-      });
     }
   }
 
