@@ -52,9 +52,9 @@ describe('Test S3 Event Lambda Function', () => {
     mockS3.promise.mockResolvedValue(getObjectOutput);
     const eventMock: S3Event = event as S3Event;
 
-    const res: Record<string, unknown> = await handler(eventMock);
+    const res: string = await handler(eventMock);
 
-    expect(res.statusCode).toBe(204);
+    expect(res).toBe('All records processed successfully.');
   });
 
   test('should return 204 with multiple s3 events', async () => {
@@ -77,12 +77,12 @@ describe('Test S3 Event Lambda Function', () => {
     mockS3.promise.mockResolvedValue(getObjectOutput);
     const eventMock: S3Event = eventTwo as S3Event;
 
-    const res: Record<string, unknown> = await handler(eventMock);
+    const res: string = await handler(eventMock);
 
-    expect(res.statusCode).toBe(204);
+    expect(res).toBe('All records processed successfully.');
   });
 
-  test('should return 500 with multiple s3 events if one breaks', async () => {
+  test('should return error message with multiple s3 events if one breaks', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
         host: process.env.SFTP_Host,

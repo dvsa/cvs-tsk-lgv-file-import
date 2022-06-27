@@ -27,12 +27,9 @@ const handleEvent = async (record: S3EventRecord) => {
  * Lambda Handler
  *
  * @param {S3Event} event
- * @param {Context} context
- * @returns {Promise<Record<string, unknown>>}
+ * @returns {Promise<string>}
  */
-export const handler = async (
-  event: S3Event,
-): Promise<Record<string, unknown>> => {
+export const handler = async (event: S3Event): Promise<string> => {
   for (const record of event.Records) {
     try {
       await handleEvent(record);
@@ -44,7 +41,5 @@ export const handler = async (
     }
   }
 
-  return Promise.resolve({
-    statusCode: 204,
-  });
+  return Promise.resolve('All records processed successfully.');
 };
