@@ -30,21 +30,6 @@ describe('Test pull file from S3', () => {
     expect(evlFileData).toStrictEqual(expectedEvlFileData);
   });
 
-  test('should return error if not text/csv', async () => {
-    const getObjectOutput: GetObjectOutput = {
-      ContentType: 'text/json',
-      Body: Buffer.from('File content'),
-    };
-    mockS3.promise.mockResolvedValueOnce(getObjectOutput);
-    const eventMock: S3Event = event as S3Event;
-
-    await expect(async () => {
-      await filePull(eventMock.Records[0]);
-    }).rejects.toThrow(
-      "File with ETag undefined has content type of 'text/json' rather than 'text/csv'.",
-    );
-  });
-
   test('should return error if body not a Buffer', async () => {
     const getObjectOutput: GetObjectOutput = {
       ContentType: 'text/csv',

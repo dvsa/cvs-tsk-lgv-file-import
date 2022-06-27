@@ -30,6 +30,8 @@ const handleEvent = async (record: S3EventRecord) => {
  * @returns {Promise<string>}
  */
 export const handler = async (event: S3Event): Promise<string> => {
+  logger.debug(`event: ${JSON.stringify(event, null, 2)}`);
+
   for (const record of event.Records) {
     try {
       await handleEvent(record);

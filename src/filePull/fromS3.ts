@@ -21,11 +21,8 @@ export const filePull = async (record: S3EventRecord) => {
   };
   try {
     const s3Object: GetObjectOutput = await s3.getObject(params).promise();
-    if (s3Object.ContentType !== 'text/csv') {
-      throw new Error(
-        `File with ETag ${s3Object.ETag} has content type of '${s3Object.ContentType}' rather than 'text/csv'.`,
-      );
-    }
+
+    logger.debug(`s3Object: ${JSON.stringify(s3Object, null, 2)}`);
     if (!Buffer.isBuffer(s3Object.Body)) {
       throw new Error(
         `Body of object with ETag ${s3Object.ETag} is not a Buffer.`,
