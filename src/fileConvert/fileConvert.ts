@@ -27,10 +27,8 @@ export const configureFile = async (
   const textFilenamePrefix = 'crc32_';
   const archiveNamePrefix = 'EVL_GVT_';
   const dateFromFilename = filename.split('_')[2].split('.')[0];
-  const zipCsvFilename =
-    workingDir + archiveNamePrefix + dateFromFilename + '.csv.gz';
-  const textFilename =
-    workingDir + textFilenamePrefix + dateFromFilename + '.txt';
+  const zipCsvFilename = archiveNamePrefix + dateFromFilename + '.csv.gz';
+  const textFilename = textFilenamePrefix + dateFromFilename + '.txt';
   const archiveName =
     workingDir + archiveNamePrefix + dateFromFilename + '.tar.gz';
 
@@ -52,14 +50,14 @@ export const configureFile = async (
     logger.info('Spliced data into the csv file');
 
     const zipData = zlib.gzipSync(data.join('\n'));
-    fs.writeFileSync(zipCsvFilename, zipData);
+    fs.writeFileSync(workingDir + zipCsvFilename, zipData);
     logger.info('Written zipped csv file');
 
     const md5sum = md5(zipData);
-    fs.writeFileSync(textFilename, md5sum);
+    fs.writeFileSync(workingDir + textFilename, md5sum);
     logger.info('Written txt checksum file');
 
-    await tar.c({ gzip: true, file: archiveName }, [
+    await tar.c({ gzip: true, file: archiveName, cwd: workingDir }, [
       textFilename,
       zipCsvFilename,
     ]);
