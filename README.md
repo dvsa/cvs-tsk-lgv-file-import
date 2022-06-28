@@ -1,73 +1,71 @@
-# lambda-starter
+# EVL Data File Push
 
-A starting pattern for AWS lambda in Typescript
+A typescript lambda function that takes an S3 bucket event, processes the file to meet business requirements, and pushes the file to an SFTP server.
 
-**Requirements**
+## Requirements
 
-- node v14.17.3
-- [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-- npm 7+
+- node v14
+- npm v8
+- aws cli v2
 
-**Prerequisites**
+## Prerequisites
 
-- Create a `.env`
-  ```shell
-  cp .env.example .env
-  ```
+- Create a `.env` file from `.env.example` and replace holding values with valid ones
+- run `npm run tools-setup`
+- run `npm i`
+- Install [git-secrets](https://github.com/awslabs/git-secrets) and do a one-time set up with `git secrets --register-aws`
 
-**Build**
+## Run Lambda Locally
 
-- `npm i`
-- `npm run build:dev`
+There are two options to run the lambda locally.
 
-**Watch**
+### Start
 
-To watch for changes and automatically trigger a new build:
+Run `npm run start`. This will instruct serverless offline to 'start' the lambda, which will create an instance of the lambda and wait to be called. Once running you can invoke the lambda using AWS CLI. An example command:
 
-- `npm run watch:dev`
+```
+aws lambda invoke --endpoint-url http://localhost:3002 --function-name cvs-tsk-enquiry-evl-file-push-dev-evlFilePush --invocation-type Event --payload fileb://s3event.json response.json
+```
 
-**Run Lambdas Locally**
+You can keep invoking the lambda until you shutdown the serverless offline process. The s3event.json file used above, can be found in the test/resources folder.
 
-- Build the files first
-- `npm run start:dev`
-- To ensure that the lambdas have been successfully served, run the following command in a separate terminal:
-  - `curl --request GET http://localhost:3000/?message=hello%20world`
-  - the response should be: `{"queryParams": {"message": "hello world"}}`
-- To run CloudWatch Event lambdas: `npm run invoke -- CloudWatchEventLambdaFunction`
+### Invoke
 
-**Debug Lambdas Locally (VS Code only)**
+Run `npm run debug`. This will instruct serverless offline to 'invoke' the lambda with a payload and then stop. The actual process involves a number of steps.
 
-- Run lambdas in debug mode: `npm run start:dev -- -d 5858`
-- Add a breakpoint to the lambda being tested (`src/handler/get.ts`)
-- Run the debug config from VS Code that corresponds to lambda being tested (`GetLambdaFunction`)
-- Send an HTTP request to the lambda's URI (`curl --request GET http://localhost:3000/?message=hello%20world`)
-- To debug CloudWatch Event lambdas: `npm run invoke -- CWEventLambdaFunction -d 5858`
+- Start serverless-s3-local
+- Create an instance of the lambda
+- Invoke the lambda with a payload
+- Stop serverless-s3-local
 
-**Tests**
+## Debug Lambdas Locally
+
+There are three debug configurations setup for vscode.
+
+- Debug Jest Tests: runs `jest` with the debugger attached
+- Debug Start: runs `npm run start` with the debugger attached
+- Debug Invoke: runs `npm run debug` with the debugger attached
+
+There is an issue with the last two configurations. The debugger does not automatically close after the debugging session. It needs to be manually stopped before you can start a new session.
+
+## SonarQube Scanning
+
+SonarQube code coverage analysis has been added as part of the git prepush hook. This is to better align with what happens in the pipeline.  
+To get it working locally, follow these steps:
+
+- Ensure SonarQube is installed. Running in a [container](https://hub.docker.com/_/sonarqube) is a great option
+- Within SonarQube, Disable Force user authentication via Administration -> Configuration -> Security
+- Install jq with `sudo apt install jq` or `brew install jq`
+
+When running `git push`, it will run tests followed by the SonarQube scan. If the scan fails or the unit test coverage is below 80%, the push is cancelled.
+
+## Tests
 
 - The [Jest](https://jestjs.io/) framework is used to run tests and collect code coverage
 - To run the tests, run the following command within the root directory of the project: `npm test`
 - Coverage results will be displayed on terminal and stored in the `coverage` directory
-  - The coverage requirements can be set in `jest.config.js`
+- The coverage requirements can be set in `jest.config.js`
 
-**Logging**
+## Logging
 
-By using a utility wrapper (`src/utility/logger`) surrounding `console.log`, the `awsRequestId` and a "correlation ID" is output with every debug/info/warn/error message.
-
-For this pattern to work, every service/lambda must forward their correlation ID to subsequent services via a header e.g. `X-Correlation-Id`.
-
-In practice, the first lambda invoked by an initial request will not have received the `X-Correlation-Id` header, so its `correlationId` gets defaulted to its `lambdaRequestId`.
-This `correlationId` should then be used when invoking subsequent lambdas via the `X-Correlation-Id` header.
-Every lambda called subsequently will then check for that `X-Correlation-Id` header and inject it into their logs.
-
-This shows an example of what the log looks like from the first invoked lambda:
-
-```
-2020-09-10T17:03:04.891Z	5ff37fce-5ace-114c-9120-a1406cc8d11d	INFO	{"apiRequestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","correlationId":"5ff37fce-5ace-114c-9120-a1406cc8d11d","message":"Here's a gnarly info message from lambda 1 - notice how my correlationId has been set to my lambdaRequestId?"}
-```
-
-This shows an example of what the logs look like from the second invoked lambda (called via the first lambda):
-
-```
-2020-09-10T17:05:31.627Z	32ff455b-057d-1dd7-98b8-7034bf182dc8	INFO	{"apiRequestId":"d9222e0a-6bd9-49e0-84dd-ffe0680bd141","correlationId":"5ff37fce-5ace-114c-9120-a1406cc8d11d","message":"Here's a gnarly info message from lambda 2 - notice how my correlationId is the same as the lambda 1"}
-```
+The logger module is located in `./util/logger/`. This is making use of the Winston logging library. Unlike the default console logging, it enables logging levels. The default level is info. This can be adjusted using an environmental variable called `LOG_LEVEL`. The `LOG_LEVEL` values used in this project are `debug`, `info`, `error` and are case sensitive.
