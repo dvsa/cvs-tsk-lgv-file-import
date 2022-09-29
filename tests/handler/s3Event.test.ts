@@ -83,6 +83,7 @@ describe('Test S3 Event Lambda Function', () => {
   });
 
   test('should return error message with multiple s3 events if one breaks', async () => {
+    process.env.SEND_SFTP = 'true';
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
         host: process.env.SFTP_Host,
