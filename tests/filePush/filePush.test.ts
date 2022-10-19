@@ -16,82 +16,59 @@ jest.mock('ssh2-sftp-client', () => {
 });
 
 jest.mock('../../src/util/getSecret', () => ({
-  getSecret: jest.fn(() => Promise.resolve('Value From Secrets Manager')),
+  getSecret: jest.fn(() =>
+    Promise.resolve(
+      '{ "host" : "test", "username" : "user", "retries" : 3, "password": "psswrd" }',
+    ),
+  ),
 }));
 
 import { filePush, createConfig, Config } from '../../src/filePush/filePush';
 
 describe('test the push to SFTP server', () => {
+  process.env.EVL_SFTP_CONFIG = 'mockString';
+  process.env.TFL_SFTP_CONFIG = 'mockString';
+
   test('should allow me to push to sftp', async () => {
-    process.env.SFTP_Password = 'testPassword';
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
-    expect(await filePush('fakefile.txt')).toBe(void 0);
+    expect(await filePush('fakefile.txt', 'evl')).toBe(void 0);
+  });
+
+  test('should allow me to push to sftp with TFL even', async () => {
+    mockConnect.mockReturnValue(Promise.resolve(true));
+    mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
+    mockEnd.mockReturnValue(Promise.resolve(void 0));
+    expect(await filePush('fakefile.txt', 'tfl')).toBe(void 0);
   });
 
   test('should error and not allow me to push to sftp', async () => {
-    process.env.SFTP_Password = 'testPassword';
     mockConnect.mockReturnValue(Promise.reject(new Error('no connection')));
-    await expect(filePush('fakefile.txt')).rejects.toThrow(
+    await expect(filePush('fakefile.txt', 'evl')).rejects.toThrow(
       new Error('no connection'),
     );
   });
 });
 
 describe('test the create config function', () => {
-  afterEach(() => {
-    delete process.env.SFTP_Password;
-    delete process.env.SFTP_Key;
-  });
-
-  test('the config is correct with just a password supplied', async () => {
-    process.env.SFTP_Password = 'testPassword';
-    const config = await createConfig();
+  test('the config is correct', async () => {
+    const config = await createConfig('evl');
     const expectedConfig: Config = {
-      host: process.env.SFTP_Host,
-      username: process.env.SFTP_User,
+      host: 'test',
+      username: 'user',
       retries: 3,
-      password: 'Value From Secrets Manager',
+      password: 'psswrd',
     };
 
     expect(config).toStrictEqual(expectedConfig);
   });
 
-  test('the config is correct with just a privateKey supplied', async () => {
-    process.env.SFTP_Key = 'privateKey';
-    const config = await createConfig();
-    const expectedConfig: Config = {
-      host: process.env.SFTP_Host,
-      username: process.env.SFTP_User,
-      retries: 3,
-      privateKey: 'Value From Secrets Manager',
-    };
-
-    expect(config).toStrictEqual(expectedConfig);
-  });
-
-  test('the config is correct with both a privateKey and password supplied', async () => {
-    process.env.SFTP_Password = 'testPassword';
-    process.env.SFTP_Key = 'privateKey';
-    const config = await createConfig();
-    const expectedConfig: Config = {
-      host: process.env.SFTP_Host,
-      username: process.env.SFTP_User,
-      retries: 3,
-      privateKey: 'Value From Secrets Manager',
-    };
-
-    expect(config).toStrictEqual(expectedConfig);
-  });
-
-  test('the config throws an error if no password or key is supplied', async () => {
+  test('the config throws an error on wrong event type', async () => {
     expect.assertions(1);
-
-    await expect(createConfig()).rejects.toThrow(
-      new Error(
-        'No password or private key found, please check the env variables',
-      ),
+    delete process.env.EVL_SFTP_CONFIG;
+    await expect(createConfig('evl')).rejects.toThrow(
+      new Error('Unexpected token u in JSON at position 0'),
     );
   });
 });

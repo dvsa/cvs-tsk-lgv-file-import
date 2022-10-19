@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
-import { configureFile } from '../../src/fileConvert/fileConvert';
+import { configureEvlFile } from '../../src/fileConvert/fileConvert';
 import * as fs from 'fs';
 import * as zlib from 'zlib';
 import md5 from 'md5';
@@ -27,25 +27,25 @@ describe('test the file config', () => {
   });
 
   test('expect filename to be correct', async () => {
-    await configureFile('', buffer, 'EVL_GVT_20220621.csv');
+    await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(finalFilename);
   });
 
   test('expect csv filename to be correct', async () => {
-    await configureFile('', buffer, 'EVL_GVT_20220621.csv');
+    await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(zipCsvFilename);
   });
 
   test('expect txt filename to be correct', async () => {
-    await configureFile('', buffer, 'EVL_GVT_20220621.csv');
+    await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const fileList = fs.readdirSync('./');
     expect(fileList).toContain(txtFilename);
   });
 
   test('expect csv to include the header and footer', async () => {
-    await configureFile('', buffer, 'EVL_GVT_20220621.csv');
+    await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const zipCsvFile = fs.readFileSync(zipCsvFilename);
     const csvFile = zlib.gunzipSync(zipCsvFile);
     const csvData = csvFile.toString();
@@ -54,7 +54,7 @@ describe('test the file config', () => {
   });
 
   test('expect hash to match', async () => {
-    await configureFile('', buffer, 'EVL_GVT_20220621.csv');
+    await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const csvFile = fs.readFileSync(zipCsvFilename);
     const textFile = fs.readFileSync(txtFilename);
     const hash = md5(csvFile);
@@ -65,7 +65,7 @@ describe('test the file config', () => {
 describe('test the file config failure condition', () => {
   test('no data provided throws an error', async () => {
     await expect(
-      configureFile('', Buffer.from(''), 'EVL_GVT_20220621.csv'),
+      configureEvlFile('', Buffer.from(''), 'EVL_GVT_20220621.csv'),
     ).rejects.toThrow('No data provided');
   });
 });
