@@ -11,7 +11,8 @@
         "--runInBand"
       ],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "/Users/Steven.Pears/.nvm/versions/node/v16.11.1/bin/node"
     },
     {
       "command": "npm start",
