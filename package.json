@@ -42,7 +42,8 @@
     "md5": "^2.3.0",
     "ssh2-sftp-client": "^9.0.0",
     "tar": "^6.1.11",
-    "winston": "^3.7.2"
+    "winston": "^3.7.2",
+    "xlsx":"^0.18.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
