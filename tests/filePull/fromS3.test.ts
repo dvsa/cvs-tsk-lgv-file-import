@@ -24,7 +24,7 @@ describe('Test pull file from S3', () => {
 
     const expectedEvlFileData = {
       data: getObjectOutput.Body,
-      filename: 'EVL_GVT_20220621.csv',
+      filename: 'Light Vehicles for VTM.xlsx',
     };
 
     expect(evlFileData).toStrictEqual(expectedEvlFileData);

@@ -43,7 +43,8 @@ export const handler = async (event: S3Event): Promise<string> => {
       }
       return `All rows of ${record.s3.object.key} processed successfully.`;
     } catch (err) {
-      return `The file ${record.s3.object.key} errored during processing.`;
+      console.log(err);
+      throw new Error(`The file ${record.s3.object.key} errored during processing.`);
     }
   }
 };
