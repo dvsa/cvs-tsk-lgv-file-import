@@ -5,15 +5,18 @@ import * as fs from 'fs';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
-var promise:jest.Mock = jest.fn();
+var promise:jest.Mock;
 var filePull:{ data:Buffer, filename:string }[] = [];
-var mockSQS = {
-  promise,
-};
+var mockSQS:{ sendMessage:jest.Mock, promise:jest.Mock };
 
 jest.mock('aws-sdk', () => {
+  promise = jest.fn();
+  mockSQS = {
+    sendMessage:jest.fn().mockReturnThis(),
+    promise,
+  };
   return {
-    SQS: jest.fn().mockImplementation(() => { return mockSQS; }),
+    SQS: jest.fn(() => mockSQS),
   };
 });
 
@@ -28,7 +31,7 @@ describe('Test S3 Event Lambda Function', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test('should return 204', async () => {
+  test('should return success', async () => {
     filePull.push({
       data:fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
       filename:'Light Vehicles for VTM.xlsx' });
@@ -39,7 +42,18 @@ describe('Test S3 Event Lambda Function', () => {
     expect(res).toBe('All rows of Light Vehicles for VTM.xlsx processed successfully.');
   });
 
-  test('should return 204 with multiple s3 events', async () => {
+  test('should send SQS event per row', async () => {
+    filePull.push({
+      data:fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
+      filename:'Light Vehicles for VTM.xlsx' });
+    const eventMock: S3Event = event as S3Event;
+
+    await handler(eventMock);
+
+    expect(mockSQS.sendMessage).toHaveBeenCalledTimes(2);
+  });
+
+  test('should return success with multiple s3 events', async () => {
     const eventMock: S3Event = event as S3Event;
     filePull.push({
       data:fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),

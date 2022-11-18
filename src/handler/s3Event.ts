@@ -32,13 +32,14 @@ export const handler = async (event: S3Event): Promise<string> => {
             'cc': getValue(worksheet, rowNumber, 6),
           };
 
-          const msgResult = await sqsClient.sendMessage({
+          await sqsClient.sendMessage({
             QueueUrl:process.env.QUEUE_URL,
             MessageBody:JSON.stringify(model),
           }).promise();
-          console.log(model);
-        } catch (err) {
-
+        } catch (err:unknown) {
+          let message = 'Unknown Error';
+          if (err instanceof Error) message = err.message;
+          console.error(`Invalid data on row ${rowNumber}: ${message}`);
         }
       }
       return `All rows of ${record.s3.object.key} processed successfully.`;
