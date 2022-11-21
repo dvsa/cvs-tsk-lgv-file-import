@@ -29,6 +29,7 @@ jest.mock('../../src/filePull/fromS3', () => {
 
 describe('Test S3 Event Lambda Function', () => {
   beforeEach(() => {
+    process.env.QUEUE_URL = 'FakeQueueUrl';
     jest.clearAllMocks();
   });
   test('should return success', async () => {
@@ -51,6 +52,18 @@ describe('Test S3 Event Lambda Function', () => {
     await handler(eventMock);
 
     expect(mockSQS.sendMessage).toHaveBeenCalledTimes(2);
+    expect(mockSQS.sendMessage).toHaveBeenCalledWith({
+      QueueUrl: 'FakeQueueUrl',
+      MessageBody: JSON.stringify({
+        'application': 'Tweet',
+        'vin': 'ABCDEF',
+        'vrm': 'C234',
+        'trl': 'CCC234',
+        'class': 'E',
+        'cycle': 'sidecar',
+        'cc': '1500',
+      }),
+    });
   });
 
   test('should return success with multiple s3 events', async () => {

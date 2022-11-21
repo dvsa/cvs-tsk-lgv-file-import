@@ -4,14 +4,13 @@ import * as AWS from 'aws-sdk';
 import { filePull } from '../filePull/fromS3';
 import logger from '../util/logger';
 import * as XLSX from 'xlsx';
+import { LgvExcelAttributes } from '../models/lgvExcelAttributes';
 
 const range = (start:number, end:number):number[] => Array.from({ length: (end + 1 - start) }, (v, k) => k + start);
-const getValue = (sheet:XLSX.WorkSheet, row:number, column: number):string => (sheet[XLSX.utils.encode_cell({ r:row, c:column })] as XLSX.CellObject).v as string;
+const getValue = (sheet:XLSX.WorkSheet, row:number, column: number):string => (sheet[XLSX.utils.encode_cell({ r:row, c:column })] as XLSX.CellObject)?.v as string;
 const sqsClient = new AWS.SQS();
 
 export const handler = async (event: S3Event): Promise<string> => {
-  logger.debug(`event: ${JSON.stringify(event, null, 2)}`);
-
   for (const record of event.Records) {
     try {
       const lgvExcelFile = await filePull(record);
@@ -22,14 +21,16 @@ export const handler = async (event: S3Event): Promise<string> => {
 
       for (const rowNumber of range(sheetRange.s.r + 1, sheetRange.e.r)) {
         try {
-          const model = {
+          const model:LgvExcelAttributes = {
             'application': getValue(worksheet, rowNumber, 0),
             'vin': getValue(worksheet, rowNumber, 1),
             'vrm': getValue(worksheet, rowNumber, 2),
             'trl': getValue(worksheet, rowNumber, 3),
             'class': getValue(worksheet, rowNumber, 4),
             'cycle': getValue(worksheet, rowNumber, 5),
-            'cc': getValue(worksheet, rowNumber, 6),
+            'cc': parseInt(getValue(worksheet, rowNumber, 6)),
+            'filename': lgvExcelFile.filename,
+            'rowNumber': rowNumber,
           };
 
           await sqsClient.sendMessage({
@@ -39,12 +40,12 @@ export const handler = async (event: S3Event): Promise<string> => {
         } catch (err:unknown) {
           let message = 'Unknown Error';
           if (err instanceof Error) message = err.message;
-          console.error(`Invalid data on row ${rowNumber}: ${message}`);
+          logger.error(`Invalid data on row ${rowNumber}: ${message}`);
         }
       }
       return `All rows of ${record.s3.object.key} processed successfully.`;
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       throw new Error(`The file ${record.s3.object.key} errored during processing.`);
     }
   }
