@@ -21,6 +21,7 @@ export interface LightVehicleTechRecord {
   vehicleSubclass: string[];
   vehicleClass?: {
     code: string;
-    description: string;
+    description?: string;
   };
+  numberOfWheelsDriven:number
 }

@@ -9,8 +9,8 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.TABLE_NAME;
 const vinIndex = process.env.VIN_INDEX;
 const vrmIndex = process.env.VRM_INDEX;
-const CURRENT_STATUS_CODE = 'CURRENT';
-const ARCHIVE_STATUS_CODE = 'ARCHIVE';
+const CURRENT_STATUS_CODE = 'current';
+const ARCHIVE_STATUS_CODE = 'archive';
 
 export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
   const response:SQSBatchResponse = {
@@ -65,10 +65,48 @@ const updateFromModel = (item: LightVehicleRecord, modelUpdate: LgvExcelAttribut
   item.vin = modelUpdate.vin;
   item.primaryVrm = modelUpdate.vrm;
 
-
+  const newDate = new Date().toISOString();
+  newTechRecord.noOfAxles = 2;
   newTechRecord.statusCode = CURRENT_STATUS_CODE;
   newTechRecord.reasonForCreation = 'Update to LGV fields from Excel spreadsheet';
-  newTechRecord.vehicleClass =
+  newTechRecord.createdAt = newDate;
+  newTechRecord.lastUpdatedAt = newDate;
+
+
+  if (modelUpdate.class) {
+    newTechRecord.vehicleSubclass = [modelUpdate.class];
+  }
+
+  switch (modelUpdate.application) {
+    case 'IVA1C':
+      newTechRecord.vehicleType = 'car';
+      break;
+    case 'MSVA1': case 'PSMVA1':
+      newTechRecord.vehicleType = 'motorcycle';
+
+      const isClassTwo = ((modelUpdate.cc && modelUpdate.cc > 200) || (modelUpdate.cycle.length > 6 && modelUpdate.cycle.indexOf('sidecar') > -1 ));
+      newTechRecord.vehicleClass = {
+        code: isClassTwo ? '2' : '1',
+        description: isClassTwo ? 'motorbikes over 200cc or with a sidecar' : 'motorbikes up to 200cc',
+      };
+
+      switch (modelUpdate.cycle.toLowerCase()) {
+        case 'bike':
+          newTechRecord.numberOfWheelsDriven = 1;
+          break;
+        case 'trike':
+          newTechRecord.numberOfWheelsDriven = 2;
+          break;
+        case 'quad':
+          newTechRecord.numberOfWheelsDriven = 3;
+      }
+
+      break;
+    case 'IVA1LG': case 'Emissions/LEC':
+      newTechRecord.vehicleType = 'LGV';
+    default:
+      throw new Error(`application ${modelUpdate.application} doesn't map to vehicle type`);
+  }
 
   return item;
 };
