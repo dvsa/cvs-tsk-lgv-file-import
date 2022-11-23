@@ -12,7 +12,9 @@ const s3 = new S3(
   },
 );
 
-export const filePull = async (record: S3EventRecord):Promise<{ data:Buffer, filename:string }> => {
+export const filePull = async (
+  record: S3EventRecord,
+): Promise<{ data: Buffer; filename: string }> => {
   const bucket = record.s3.bucket.name;
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
   const params = {

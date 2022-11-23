@@ -23,5 +23,5 @@ export interface LightVehicleTechRecord {
     code: string;
     description?: string;
   };
-  numberOfWheelsDriven:number
+  numberOfWheelsDriven: number;
 }

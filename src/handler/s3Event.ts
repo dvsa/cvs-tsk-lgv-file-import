@@ -6,8 +6,11 @@ import logger from '../util/logger';
 import * as XLSX from 'xlsx';
 import { LgvExcelAttributes } from '../models/lgvExcelAttributes';
 
-const range = (start:number, end:number):number[] => Array.from({ length: (end + 1 - start) }, (v, k) => k + start);
-const getValue = (sheet:XLSX.WorkSheet, row:number, column: number):string => (sheet[XLSX.utils.encode_cell({ r:row, c:column })] as XLSX.CellObject)?.v as string;
+const range = (start: number, end: number): number[] =>
+  Array.from({ length: end + 1 - start }, (v, k) => k + start);
+const getValue = (sheet: XLSX.WorkSheet, row: number, column: number): string =>
+  (sheet[XLSX.utils.encode_cell({ r: row, c: column })] as XLSX.CellObject)
+    ?.v as string;
 const sqsClient = new AWS.SQS();
 
 export const handler = async (event: S3Event): Promise<string> => {
@@ -21,23 +24,25 @@ export const handler = async (event: S3Event): Promise<string> => {
 
       for (const rowNumber of range(sheetRange.s.r + 1, sheetRange.e.r)) {
         try {
-          const model:LgvExcelAttributes = {
-            'application': getValue(worksheet, rowNumber, 0),
-            'vin': getValue(worksheet, rowNumber, 1),
-            'vrm': getValue(worksheet, rowNumber, 2),
-            'trl': getValue(worksheet, rowNumber, 3),
-            'class': getValue(worksheet, rowNumber, 4),
-            'cycle': getValue(worksheet, rowNumber, 5),
-            'cc': parseInt(getValue(worksheet, rowNumber, 6)),
-            'filename': lgvExcelFile.filename,
-            'rowNumber': rowNumber,
+          const model: LgvExcelAttributes = {
+            application: getValue(worksheet, rowNumber, 0),
+            vin: getValue(worksheet, rowNumber, 1),
+            vrm: getValue(worksheet, rowNumber, 2),
+            trl: getValue(worksheet, rowNumber, 3),
+            class: getValue(worksheet, rowNumber, 4),
+            cycle: getValue(worksheet, rowNumber, 5),
+            cc: parseInt(getValue(worksheet, rowNumber, 6)),
+            filename: lgvExcelFile.filename,
+            rowNumber: rowNumber,
           };
 
-          await sqsClient.sendMessage({
-            QueueUrl:process.env.QUEUE_URL,
-            MessageBody:JSON.stringify(model),
-          }).promise();
-        } catch (err:unknown) {
+          await sqsClient
+            .sendMessage({
+              QueueUrl: process.env.QUEUE_URL,
+              MessageBody: JSON.stringify(model),
+            })
+            .promise();
+        } catch (err: unknown) {
           let message = 'Unknown Error';
           if (err instanceof Error) message = err.message;
           logger.error(`Invalid data on row ${rowNumber}: ${message}`);
@@ -46,7 +51,9 @@ export const handler = async (event: S3Event): Promise<string> => {
       return `All rows of ${record.s3.object.key} processed successfully.`;
     } catch (err) {
       logger.error(err);
-      throw new Error(`The file ${record.s3.object.key} errored during processing.`);
+      throw new Error(
+        `The file ${record.s3.object.key} errored during processing.`,
+      );
     }
   }
 };
