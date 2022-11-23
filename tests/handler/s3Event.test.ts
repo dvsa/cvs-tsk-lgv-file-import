@@ -65,7 +65,9 @@ describe('Test S3 Event Lambda Function', () => {
         trl: 'CCC234',
         class: 'E',
         cycle: 'sidecar',
-        cc: '1500',
+        cc: 1500,
+        filename: 'Light Vehicles for VTM.xlsx',
+        rowNumber: 2,
       }),
     });
   });
