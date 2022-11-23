@@ -53,19 +53,21 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
 };
 
 const updateFromModel = (item: LightVehicleRecord, modelUpdate: LgvExcelAttributes): LightVehicleRecord => {
-  const candidateRecords = item.techRecord.filter(v => v.statusCode === 'CURRENT');
+  const candidateRecords = item.techRecord.filter(v => v.statusCode.toLowerCase() === CURRENT_STATUS_CODE);
   if (candidateRecords.length !== 1) {
     throw new Error('no single current record for this vehicle');
   }
 
+  const newDate = new Date().toISOString();
+
   candidateRecords[0].statusCode = ARCHIVE_STATUS_CODE;
+  candidateRecords[0].lastUpdatedAt = newDate;
   const newTechRecord = JSON.parse(JSON.stringify(candidateRecords[0])) as LightVehicleTechRecord;
   item.techRecord.push(newTechRecord);
 
   item.vin = modelUpdate.vin;
   item.primaryVrm = modelUpdate.vrm;
 
-  const newDate = new Date().toISOString();
   newTechRecord.noOfAxles = 2;
   newTechRecord.statusCode = CURRENT_STATUS_CODE;
   newTechRecord.reasonForCreation = 'Update to LGV fields from Excel spreadsheet';
