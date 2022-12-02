@@ -1,4 +1,8 @@
 export interface LightVehicleRecord {
+  msUserDetails: {
+    msUser: string;
+    msOid: string;
+  };
   primaryVrm?: string;
   systemNumber: string;
   vin: string;
