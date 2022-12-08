@@ -59,7 +59,7 @@ describe('Test S3 Event Lambda Function', () => {
     expect(mockSQS.sendMessage).toHaveBeenCalledWith({
       QueueUrl: 'FakeQueueUrl',
       MessageBody: JSON.stringify({
-        application: 'Tweet',
+        application: 'PSMVA1',
         vin: 'ABCDEF',
         vrm: 'C234',
         trl: 'CCC234',

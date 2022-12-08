@@ -3,7 +3,7 @@
     {
       "messageId": "059f36b4-87a3-44ab-83d2-661975830a7d",
       "receiptHandle": "AQEBwJnKyrHigUMZj6rYigCgxlaS3SLy0a...",
-      "body": "{\"application\":\"Tweet\",\"vin\":\"ABCDEF\",\"vrm\":\"C234\",\"trl\":\"CCC234\",\"class\":\"E\",\"cycle\":\"sidecar\",\"cc\":1500,\"filename\":\"Light Vehicles for VTM.xlsx\",\"rowNumber\":2}",
+      "body": "{\"application\":\"PSMVA1\",\"vin\":\"ABCDEF\",\"vrm\":\"C234\",\"trl\":\"CCC234\",\"class\":\"E\",\"cycle\":\"bike and sidecar\",\"cc\":1500,\"filename\":\"Light Vehicles for VTM.xlsx\",\"rowNumber\":2}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1545082649183",

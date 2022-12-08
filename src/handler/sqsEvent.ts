@@ -106,7 +106,7 @@ const updateFromModel = (
       };
 
       switch (modelUpdate.cycle.toLowerCase()) {
-        case 'bike':
+        case 'bike': case 'bike and sidecar':
           newTechRecord.numberOfWheelsDriven = 1;
           break;
         case 'trike':
