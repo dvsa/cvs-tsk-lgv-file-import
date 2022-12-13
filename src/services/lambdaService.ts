@@ -90,8 +90,10 @@ const updateTechRecord: (
     response.Payload.toString('utf8'),
   ) as APIGatewayProxyResult;
 
-  if ( responsePayload.statusCode !== 200 ) {
-    logger.error(`received status code ${responsePayload.statusCode} from tech record update`);
+  if (responsePayload.statusCode !== 200) {
+    logger.error(
+      `received status code ${responsePayload.statusCode} from tech record update`,
+    );
     return false;
   }
   return true;
