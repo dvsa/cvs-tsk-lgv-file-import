@@ -47,7 +47,8 @@ describe('Test SQS Event Lambda Function', () => {
     expect(res.batchItemFailures).toHaveLength(0);
   });
 
-  test('should run doUpdate on each record', async () => {
+  test('should run update process on each record', async () => {
+    mockLambdaService.updateTechRecord.mockResolvedValue(true);
     const techRecord = { statusCode:'current' } as unknown as LightVehicleTechRecord;
     const vehicle:LightVehicleRecord = {
       techRecord:[techRecord],
@@ -60,5 +61,20 @@ describe('Test SQS Event Lambda Function', () => {
     expect(mockLambdaService.getTechRecord).toHaveBeenCalledTimes(1);
     expect(mockLambdaService.updateTechRecord).toHaveBeenCalledTimes(1);
     expect(res.batchItemFailures).toHaveLength(0);
+  });
+
+  test('should return failure if the update service returns non 200', async () => {
+    mockLambdaService.updateTechRecord.mockResolvedValue(false);
+
+    const techRecord = { statusCode:'current' } as unknown as LightVehicleTechRecord;
+    const vehicle:LightVehicleRecord = {
+      techRecord:[techRecord],
+    } as unknown as LightVehicleRecord;
+
+    mockLambdaService.getTechRecord.mockResolvedValue(vehicle);
+    const eventMock = generateSQSEvent();
+    const res =  await handler(eventMock);
+
+    expect(res.batchItemFailures).toHaveLength(1);
   });
 });

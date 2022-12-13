@@ -16,7 +16,7 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
   const results = await Promise.allSettled(records);
 
   results.forEach((r, i) => {
-    if (r.status === 'rejected') {
+    if (r.status === 'rejected' || !r.value) {
       response.batchItemFailures.push({
         itemIdentifier: event.Records[parseInt(`${i}`)].messageId,
       });
@@ -37,7 +37,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
 
     const techRecord = await getTechRecord(modelUpdate);
     const updatedTechRecord = updateFromModel(techRecord, modelUpdate);
-    await updateTechRecord(updatedTechRecord);
+    return await updateTechRecord(updatedTechRecord);
   } catch (err: unknown) {
     let message = 'unknown error';
     if (err instanceof Error) message = err.message;

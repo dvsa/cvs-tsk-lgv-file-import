@@ -3,6 +3,7 @@ import { LightVehicleRecord } from '../models/techRecords';
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import { InvocationRequest } from 'aws-sdk/clients/lambda';
+import logger from '../util/logger';
 
 const lambdaName = process.env.LAMBDA_NAME;
 const lambda = new AWS.Lambda();
@@ -88,7 +89,12 @@ const updateTechRecord: (
   const responsePayload = JSON.parse(
     response.Payload.toString('utf8'),
   ) as APIGatewayProxyResult;
-  return responsePayload.statusCode === 200;
+
+  if ( responsePayload.statusCode !== 200 ) {
+    logger.error(`received status code ${responsePayload.statusCode} from tech record update`);
+    return false;
+  }
+  return true;
 };
 
 export { getTechRecord, updateTechRecord };
