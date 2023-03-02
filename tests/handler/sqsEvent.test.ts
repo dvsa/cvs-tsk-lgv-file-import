@@ -1,10 +1,14 @@
 import event from '../resources/sqsEvent.json';
 import type { SQSEvent } from 'aws-lambda';
-import { handler } from '../../src/handler/sqsEvent';
+import { handler, updateFromModel } from '../../src/handler/sqsEvent';
 import {
   LightVehicleRecord,
   LightVehicleTechRecord,
 } from '../../src/models/techRecords';
+import {
+  Application,
+  LgvExcelAttributes,
+} from '../../src/models/lgvExcelAttributes';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
@@ -45,7 +49,7 @@ describe('Test SQS Event Lambda Function', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test('should return success with zero records', async () => {
+  it('should return success with zero records', async () => {
     const eventMock = generateSQSEvent();
     eventMock.Records = [];
     const res = await handler(eventMock);
@@ -53,7 +57,7 @@ describe('Test SQS Event Lambda Function', () => {
     expect(res.batchItemFailures).toHaveLength(0);
   });
 
-  test('should run update process on each record', async () => {
+  it('should run update process on each record', async () => {
     mockLambdaService.updateTechRecord.mockResolvedValue(true);
     const techRecord = {
       statusCode: 'current',
@@ -71,7 +75,7 @@ describe('Test SQS Event Lambda Function', () => {
     expect(res.batchItemFailures).toHaveLength(0);
   });
 
-  test('should return failure if the update service returns non 200', async () => {
+  it('should return failure if the update service returns non 200', async () => {
     mockLambdaService.updateTechRecord.mockResolvedValue(false);
 
     const techRecord = {
@@ -86,5 +90,106 @@ describe('Test SQS Event Lambda Function', () => {
     const res = await handler(eventMock);
 
     expect(res.batchItemFailures).toHaveLength(1);
+  });
+
+  it('should throw an error if there is no single current record', () => {
+    expect(() => {
+      updateFromModel(
+        { techRecord: [] } as unknown as LightVehicleRecord,
+        {} as unknown as LgvExcelAttributes,
+      );
+    }).toThrow();
+    expect(() => {
+      updateFromModel(
+        {
+          techRecord: [{ statusCode: 'current' }, { statusCode: 'current' }],
+        } as unknown as LightVehicleRecord,
+        {} as LgvExcelAttributes,
+      );
+    }).toThrow();
+  });
+
+  it('should set the vehicle type as car for an IVA1C', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = { application: Application.IVA1C } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result.techRecord[0].vehicleType).toBe('car');
+  });
+
+  it('should set the vehicle type as motorycle for an MVSA', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: Application.MVSA,
+      cycle: 'bike',
+    } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result.techRecord[0].vehicleType).toBe('motorcycle');
+  });
+
+  it('should set vehicle class to class 2 if there is a sidecar', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: Application.MVSA,
+      cycle: 'bike and sidecar',
+    } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result.techRecord[0].vehicleType).toBe('motorcycle');
+    expect(result.techRecord[0].vehicleClass.code).toBe('2');
+    expect(result.techRecord[0].vehicleClass.description).toBe(
+      'motorbikes over 200cc or with a sidecar',
+    );
+  });
+  const testCases = [
+    {
+      expectedNumberOfWheels: 1,
+      cycle: 'bike',
+    },
+    {
+      expectedNumberOfWheels: 1,
+      cycle: 'bike and sidecar',
+    },
+    {
+      expectedNumberOfWheels: 2,
+      cycle: 'trike',
+    },
+    {
+      expectedNumberOfWheels: 3,
+      cycle: 'quad',
+    },
+  ];
+  it.each(testCases)(
+    'should set the numberOfWheelsDriven',
+    ({ expectedNumberOfWheels, cycle }) => {
+      const record = {
+        techRecord: [{ statusCode: 'current' }],
+      } as LightVehicleRecord;
+      const excelRows = {
+        application: Application.MVSA,
+        cycle,
+      } as LgvExcelAttributes;
+      const result = updateFromModel(record, excelRows);
+      expect(result.techRecord[0].vehicleType).toBe('motorcycle');
+      expect(result.techRecord[0].numberOfWheelsDriven).toBe(
+        expectedNumberOfWheels,
+      );
+    },
+  );
+
+  it('should throw an error', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: 'application is not real',
+    } as LgvExcelAttributes;
+    expect(() => {
+      updateFromModel(record, excelRows);
+    }).toThrow();
   });
 });

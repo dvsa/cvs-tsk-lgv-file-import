@@ -13,7 +13,7 @@
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "lint:ci": "eslint '*/**/*.ts'",
     "format": "prettier --write .",
-    "audit": "npm audit",
+    "audit": "npm audit --prod",
     "sonar-scanner": "npm run test && sonar-scanner",
     "security-checks": "git secrets --scan",
     "package": "mkdir ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production --ignore-scripts && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip . && cd .. && rimraf ${ZIP_NAME}",

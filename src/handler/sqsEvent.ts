@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import type { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
 import logger from '../util/logger';
-import { LgvExcelAttributes } from '../models/lgvExcelAttributes';
+import { Application, LgvExcelAttributes } from '../models/lgvExcelAttributes';
 import { LightVehicleRecord } from '../models/techRecords';
 import { getTechRecord, updateTechRecord } from '../services/lambdaService';
 
@@ -46,11 +46,9 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     );
     throw err;
   }
-
-  return true;
 };
 
-const updateFromModel = (
+export const updateFromModel = (
   item: LightVehicleRecord,
   modelUpdate: LgvExcelAttributes,
 ): LightVehicleRecord => {
@@ -87,10 +85,10 @@ const updateFromModel = (
   }
 
   switch (modelUpdate.application) {
-    case 'IVA1C':
+    case Application.IVA1C:
       newTechRecord.vehicleType = 'car';
       break;
-    case 'MSVA1':
+    case Application.MVSA:
     case 'PSMVA1':
       newTechRecord.vehicleType = 'motorcycle';
 

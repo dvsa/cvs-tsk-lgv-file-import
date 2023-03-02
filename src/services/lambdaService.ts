@@ -99,4 +99,4 @@ const updateTechRecord: (
   return true;
 };
 
-export { getTechRecord, updateTechRecord };
+export { getTechRecord, updateTechRecord, lambda };

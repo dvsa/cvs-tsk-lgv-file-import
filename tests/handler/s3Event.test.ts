@@ -32,7 +32,7 @@ describe('Test S3 Event Lambda Function', () => {
     process.env.QUEUE_URL = 'FakeQueueUrl';
     jest.clearAllMocks();
   });
-  test('should return success', async () => {
+  it('should return success', async () => {
     filePull.push({
       data: fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
       filename: 'Light Vehicles for VTM.xlsx',
@@ -46,7 +46,7 @@ describe('Test S3 Event Lambda Function', () => {
     );
   });
 
-  test('should send SQS event per row', async () => {
+  it('should send SQS event per row', async () => {
     filePull.push({
       data: fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
       filename: 'Light Vehicles for VTM.xlsx',
@@ -72,7 +72,7 @@ describe('Test S3 Event Lambda Function', () => {
     });
   });
 
-  test('should return success with multiple s3 events', async () => {
+  it('should return success with multiple s3 events', async () => {
     const eventMock: S3Event = event as S3Event;
     filePull.push({
       data: fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
@@ -88,7 +88,7 @@ describe('Test S3 Event Lambda Function', () => {
     );
   });
 
-  test('should return error message with multiple s3 events if one breaks', async () => {
+  it('should return error message with multiple s3 events if one breaks', async () => {
     filePull.push({
       data: fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
       filename: 'Light Vehicles for VTM.xlsx',
