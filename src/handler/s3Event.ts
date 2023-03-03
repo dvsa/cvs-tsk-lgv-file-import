@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
-import type { S3Event } from 'aws-lambda';
+import { S3Event } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import { filePull } from '../filePull/fromS3';
 import logger from '../util/logger';

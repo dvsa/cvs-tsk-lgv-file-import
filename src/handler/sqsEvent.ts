@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
-import type { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
+import { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
 import logger from '../util/logger';
 import { Application, LgvExcelAttributes } from '../models/lgvExcelAttributes';
 import { LightVehicleRecord } from '../models/techRecords';
