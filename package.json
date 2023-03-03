@@ -38,6 +38,7 @@
     "@types/md5": "^2.3.2",
     "@types/ssh2-sftp-client": "^7.0.1",
     "@types/tar": "^6.1.1",
+    "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1153.0",
     "md5": "^2.3.0",
     "ssh2-sftp-client": "^9.0.0",
@@ -84,7 +85,7 @@
     "got": "^11.8.5"
   },
   "engines": {
-    "node": "^14.17.3"
+    "node": "^18.*"
   },
   "jestSonar": {
     "reportPath": ".reports",
