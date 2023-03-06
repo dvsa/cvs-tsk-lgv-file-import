@@ -16,7 +16,6 @@ const loggerConfig = {
 };
 
 const logger = createLogger();
-logger.exitOnError = false;
 logger.add(new transports.Console(loggerConfig));
 
 export default logger;
