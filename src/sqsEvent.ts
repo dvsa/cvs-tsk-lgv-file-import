@@ -1,9 +1,9 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
-import logger from '../util/logger';
-import { Application, LgvExcelAttributes } from '../models/lgvExcelAttributes';
-import { LightVehicleRecord } from '../models/techRecords';
-import { getTechRecord, updateTechRecord } from '../services/lambdaService';
+import { LgvExcelAttributes, Application } from './models/lgvExcelAttributes';
+import { LightVehicleRecord } from './models/techRecords';
+import { getTechRecord, updateTechRecord } from './services/lambdaService';
+import logger from './util/logger';
 
 const CURRENT_STATUS_CODE = 'current';
 

@@ -1,7 +1,7 @@
 import event from '../resources/s3event.json';
 import type { S3Event } from 'aws-lambda';
-import { handler } from '../../src/handler/s3Event';
 import * as fs from 'fs';
+import { handler } from '../../src/s3Event';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */

@@ -1,10 +1,10 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import { S3Event } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
-import { filePull } from '../filePull/fromS3';
-import logger from '../util/logger';
 import * as XLSX from 'xlsx';
-import { LgvExcelAttributes } from '../models/lgvExcelAttributes';
+import { filePull } from './filePull/fromS3';
+import { LgvExcelAttributes } from './models/lgvExcelAttributes';
+import logger from './util/logger';
 
 const range = (start: number, end: number): number[] =>
   Array.from({ length: end + 1 - start }, (v, k) => k + start);

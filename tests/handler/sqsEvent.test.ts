@@ -1,6 +1,5 @@
 import event from '../resources/sqsEvent.json';
 import type { SQSEvent } from 'aws-lambda';
-import { handler, updateFromModel } from '../../src/handler/sqsEvent';
 import {
   LightVehicleRecord,
   LightVehicleTechRecord,
@@ -9,6 +8,7 @@ import {
   Application,
   LgvExcelAttributes,
 } from '../../src/models/lgvExcelAttributes';
+import { handler, updateFromModel } from '../../src/sqsEvent';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
