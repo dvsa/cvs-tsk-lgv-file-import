@@ -8,11 +8,9 @@ import logger from '../util/logger';
 const lambdaName = process.env.LAMBDA_NAME;
 const lambda = new AWS.Lambda();
 
-const getTechRecord: (
+const getTechRecord = async (
   modelUpdate: LgvExcelAttributes,
-) => Promise<LightVehicleRecord> = async (
-  modelUpdate: LgvExcelAttributes,
-): Promise<LightVehicleRecord> => {
+): Promise<LightVehicleRecord | undefined> => {
   const payload: APIGatewayEvent = {
     body: '',
     path: `/vehicles/${modelUpdate.vin}/tech-records`,
@@ -50,14 +48,11 @@ const getTechRecord: (
     }
   }
 
-  if (vehicles.length > 0) {
+  if (vehicles.length) {
     return vehicles[0];
   }
 
-  //Unable to guarantee vehicle - throw
-  throw new Error(
-    `Application on row ${modelUpdate.rowNumber} of ${modelUpdate.filename} doesn't resolve to a single vehicle`,
-  );
+
 };
 
 const updateTechRecord: (
@@ -99,4 +94,6 @@ const updateTechRecord: (
   return true;
 };
 
-export { getTechRecord, updateTechRecord, lambda };
+
+
+export { getTechRecord, updateTechRecord, lambda  };

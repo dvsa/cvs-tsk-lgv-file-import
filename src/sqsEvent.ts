@@ -49,7 +49,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
 };
 
 export const updateFromModel = (
-  item: LightVehicleRecord,
+  item: LightVehicleRecord | undefined,
   modelUpdate: LgvExcelAttributes,
 ): LightVehicleRecord => {
   const candidateRecords = item.techRecord.filter(
@@ -125,5 +125,5 @@ export const updateFromModel = (
       );
   }
 
-  return item;
+  return item ;
 };
