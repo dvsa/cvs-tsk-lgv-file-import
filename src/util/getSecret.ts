@@ -1,6 +1,6 @@
 import { SecretsManager } from 'aws-sdk';
 
-async function getSecret(secretName: string): Promise<string> {
+async function getSecret(secretName: string): Promise<string | undefined> {
   const envVariable: string | undefined =
     process.env[secretName.replace(/\//g, '-')];
   if (envVariable !== undefined) {

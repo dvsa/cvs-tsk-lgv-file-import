@@ -140,8 +140,8 @@ describe('Test SQS Event Lambda Function', () => {
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
     expect(result.techRecord[0].vehicleType).toBe('motorcycle');
-    expect(result.techRecord[0].vehicleClass.code).toBe('2');
-    expect(result.techRecord[0].vehicleClass.description).toBe(
+    expect(result.techRecord[0].vehicleClass?.code).toBe('2');
+    expect(result.techRecord[0].vehicleClass?.description).toBe(
       'motorbikes over 200cc or with a sidecar',
     );
   });

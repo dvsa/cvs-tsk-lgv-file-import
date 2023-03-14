@@ -13,14 +13,14 @@ const getValue = (sheet: XLSX.WorkSheet, row: number, column: number): string =>
     ?.v as string;
 const sqsClient = new AWS.SQS();
 
-export const handler = async (event: S3Event): Promise<string> => {
+export const handler = async (event: S3Event): Promise<string | undefined> => {
   for (const record of event.Records) {
     try {
       const lgvExcelFile = await filePull(record);
       const workbook = XLSX.read(lgvExcelFile.data);
 
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const sheetRange = XLSX.utils.decode_range(worksheet['!ref']);
+      const sheetRange = XLSX.utils.decode_range(worksheet['!ref'] ?? '');
 
       for (const rowNumber of range(sheetRange.s.r + 1, sheetRange.e.r)) {
         try {
@@ -38,7 +38,7 @@ export const handler = async (event: S3Event): Promise<string> => {
 
           await sqsClient
             .sendMessage({
-              QueueUrl: process.env.QUEUE_URL,
+              QueueUrl: process.env.QUEUE_URL ?? '',
               MessageBody: JSON.stringify(model),
             })
             .promise();

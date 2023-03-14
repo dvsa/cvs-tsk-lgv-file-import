@@ -39,7 +39,7 @@ describe('Test S3 Event Lambda Function', () => {
     });
     const eventMock: S3Event = event as S3Event;
 
-    const res: string = await handler(eventMock);
+    const res: string = (await handler(eventMock)) ?? '';
 
     expect(res).toBe(
       'All rows of Light Vehicles for VTM.xlsx processed successfully.',
@@ -94,7 +94,8 @@ describe('Test S3 Event Lambda Function', () => {
       filename: 'Light Vehicles for VTM.xlsx',
     });
     filePull.push({
-      data: null,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      data: null as any,
       filename: 'Light Vehicles for VTM.xlsx',
     });
 

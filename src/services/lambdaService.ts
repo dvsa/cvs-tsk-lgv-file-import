@@ -22,7 +22,8 @@ const getTechRecord = async (
     },
     multiValueHeaders: {},
     multiValueQueryStringParameters: {},
-    requestContext: null,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
     isBase64Encoded: false,
     headers: {},
     stageVariables: {},
@@ -30,14 +31,14 @@ const getTechRecord = async (
   };
 
   const lambdaRequest: InvocationRequest = {
-    FunctionName: lambdaName,
+    FunctionName: lambdaName ?? '',
     InvocationType: 'RequestResponse',
     Payload: JSON.stringify(payload),
   };
 
   const response = await lambda.invoke(lambdaRequest).promise();
   const responsePayload = JSON.parse(
-    response.Payload.toString('utf8'),
+    response.Payload?.toString('utf8') ?? '',
   ) as APIGatewayProxyResult;
   const vehicles = JSON.parse(responsePayload.body) as LightVehicleRecord[];
 
@@ -48,11 +49,9 @@ const getTechRecord = async (
     }
   }
 
-  if (vehicles.length) {
+  if (vehicles.length > 0) {
     return vehicles[0];
   }
-
-
 };
 
 const updateTechRecord: (
@@ -62,27 +61,28 @@ const updateTechRecord: (
 ): Promise<boolean> => {
   const payload: APIGatewayEvent = {
     body: JSON.stringify(updatedRecord),
-    path: '/vehicles/update-status/' + updatedRecord.systemNumber.toString(),
+    path: '/vehicles/' + updatedRecord.systemNumber.toString(),
     httpMethod: 'PUT',
     pathParameters: { systemNumber: updatedRecord.systemNumber.toString() },
     queryStringParameters: null,
     multiValueHeaders: {},
     multiValueQueryStringParameters: {},
-    requestContext: null,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
     isBase64Encoded: false,
     headers: {},
     stageVariables: {},
     resource: '',
   };
   const lambdaRequest: InvocationRequest = {
-    FunctionName: lambdaName,
+    FunctionName: lambdaName ?? '',
     InvocationType: 'RequestResponse',
     Payload: JSON.stringify(payload),
   };
 
   const response = await lambda.invoke(lambdaRequest).promise();
   const responsePayload = JSON.parse(
-    response.Payload.toString('utf8'),
+    response.Payload?.toString('utf8') ?? '',
   ) as APIGatewayProxyResult;
 
   if (responsePayload.statusCode !== 200) {
@@ -94,6 +94,44 @@ const updateTechRecord: (
   return true;
 };
 
+const createTechRecord: (
+  updatedRecord: LightVehicleRecord,
+) => Promise<boolean> = async (
+  updatedRecord: LightVehicleRecord,
+): Promise<boolean> => {
+  const payload: APIGatewayEvent = {
+    body: JSON.stringify(updatedRecord),
+    path: '/vehicles',
+    httpMethod: 'POST',
+    pathParameters: null,
+    queryStringParameters: null,
+    multiValueHeaders: {},
+    multiValueQueryStringParameters: {},
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
+    isBase64Encoded: false,
+    headers: {},
+    stageVariables: {},
+    resource: '',
+  };
+  const lambdaRequest: InvocationRequest = {
+    FunctionName: lambdaName ?? '',
+    InvocationType: 'RequestResponse',
+    Payload: JSON.stringify(payload),
+  };
 
+  const response = await lambda.invoke(lambdaRequest).promise();
+  const responsePayload = JSON.parse(
+    response.Payload?.toString('utf8') ?? '',
+  ) as APIGatewayProxyResult;
 
-export { getTechRecord, updateTechRecord, lambda  };
+  if (responsePayload.statusCode !== 201) {
+    logger.error(
+      `received status code ${responsePayload.statusCode} from tech record update`,
+    );
+    return false;
+  }
+  return true;
+};
+
+export { getTechRecord, updateTechRecord, lambda, createTechRecord };

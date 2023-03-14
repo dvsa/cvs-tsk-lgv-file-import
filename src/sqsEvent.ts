@@ -2,7 +2,11 @@
 import { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
 import { LgvExcelAttributes, Application } from './models/lgvExcelAttributes';
 import { LightVehicleRecord } from './models/techRecords';
-import { getTechRecord, updateTechRecord } from './services/lambdaService';
+import {
+  createTechRecord,
+  getTechRecord,
+  updateTechRecord,
+} from './services/lambdaService';
 import logger from './util/logger';
 
 const CURRENT_STATUS_CODE = 'current';
@@ -36,8 +40,14 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     }
 
     const techRecord = await getTechRecord(modelUpdate);
-    const updatedTechRecord = updateFromModel(techRecord, modelUpdate);
-    return await updateTechRecord(updatedTechRecord);
+    const techRecordToUpdate = techRecord
+      ? techRecord
+      : ({} as LightVehicleRecord);
+    const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
+    const result = techRecord
+      ? await updateTechRecord(updatedTechRecord)
+      : await createTechRecord(updatedTechRecord);
+    return result;
   } catch (err: unknown) {
     let message = 'unknown error';
     if (err instanceof Error) message = err.message;
@@ -49,7 +59,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
 };
 
 export const updateFromModel = (
-  item: LightVehicleRecord | undefined,
+  item: LightVehicleRecord,
   modelUpdate: LgvExcelAttributes,
 ): LightVehicleRecord => {
   const candidateRecords = item.techRecord.filter(
@@ -119,11 +129,12 @@ export const updateFromModel = (
     case 'IVA1LG':
     case 'Emissions/LEC':
       newTechRecord.vehicleType = 'LGV';
+      break;
     default:
       throw new Error(
         `application ${modelUpdate.application} doesn't map to vehicle type`,
       );
   }
 
-  return item ;
+  return item;
 };

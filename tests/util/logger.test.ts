@@ -30,6 +30,8 @@ describe('logger functions', () => {
     const consoleSpy = jest.spyOn(console._stdout, 'write');
     const error = new Error('AN ERROR');
     logger.error('', error);
-    expect(consoleSpy).toHaveBeenLastCalledWith(`error: ${error.stack}${EOL}`);
+    expect(consoleSpy).toHaveBeenLastCalledWith(
+      `error: ${error.stack ?? ''}${EOL}`,
+    );
   });
 });
