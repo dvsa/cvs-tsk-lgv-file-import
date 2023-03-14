@@ -42,7 +42,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     const techRecord = await getTechRecord(modelUpdate);
     const techRecordToUpdate = techRecord
       ? techRecord
-      : ({} as LightVehicleRecord);
+      : { techRecord: [] } as unknown as LightVehicleRecord ;
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord)
@@ -66,7 +66,7 @@ export const updateFromModel = (
     (v) => v.statusCode.toLowerCase() === CURRENT_STATUS_CODE,
   );
 
-  if (candidateRecords.length !== 1) {
+  if (candidateRecords.length > 1) {
     throw new Error('no single current record for this vehicle');
   }
 
