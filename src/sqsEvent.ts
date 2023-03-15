@@ -46,6 +46,9 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
         techRecord: [{ statusCode: CURRENT_STATUS_CODE }],
       } as LightVehicleRecord);
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
+    if (!updatedTechRecord) {
+      return true;
+    }
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord)
       : await createTechRecord(updatedTechRecord);
@@ -63,7 +66,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
 export const updateFromModel = (
   item: LightVehicleRecord,
   modelUpdate: LgvExcelAttributes,
-): LightVehicleRecord => {
+): LightVehicleRecord | undefined => {
   const candidateRecords = item.techRecord.filter(
     (v) => v.statusCode.toLowerCase() === CURRENT_STATUS_CODE,
   );
@@ -97,6 +100,9 @@ export const updateFromModel = (
   }
 
   switch (modelUpdate.application) {
+    case Application._1P:
+      logger.info('Application type 1P, nothing to do...');
+      return;
     case Application.IVA1C:
       newTechRecord.vehicleType = 'car';
       break;

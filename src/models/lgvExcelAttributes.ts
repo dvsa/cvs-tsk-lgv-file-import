@@ -15,4 +15,5 @@ export enum Application {
   MSVA = 'MSVA',
   LG = 'LG',
   _1LG = '1LG',
+  _1P = '1P',
 }
