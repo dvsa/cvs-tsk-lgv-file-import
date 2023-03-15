@@ -22,6 +22,7 @@ var mockDocumentClient: { put: jest.Mock; promise: jest.Mock };
 var mockLambdaService: {
   getTechRecord: jest.Mock;
   updateTechRecord: jest.Mock;
+  createTechRecord: jest.Mock;
 };
 
 jest.mock('aws-sdk', () => {
@@ -42,6 +43,7 @@ jest.mock('../../src/services/lambdaService', () => {
   mockLambdaService = {
     getTechRecord: jest.fn(),
     updateTechRecord: jest.fn(),
+    createTechRecord: jest.fn(),
   };
   return mockLambdaService;
 });
@@ -119,7 +121,7 @@ describe('Test SQS Event Lambda Function', () => {
     } as LightVehicleRecord;
     const excelRows = { application: Application.IVA1C } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
-    expect(result.techRecord[0].vehicleType).toBe('car');
+    expect(result?.techRecord[0].vehicleType).toBe('car');
   });
 
   it('should set the vehicle type as motorycle for an MVSA', () => {
@@ -131,7 +133,7 @@ describe('Test SQS Event Lambda Function', () => {
       cycle: 'bike',
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
-    expect(result.techRecord[0].vehicleType).toBe('motorcycle');
+    expect(result?.techRecord[0].vehicleType).toBe('motorcycle');
   });
 
   it('should set vehicle class to class 2 if there is a sidecar', () => {
@@ -143,11 +145,37 @@ describe('Test SQS Event Lambda Function', () => {
       cycle: 'bike and sidecar',
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
-    expect(result.techRecord[0].vehicleType).toBe('motorcycle');
-    expect(result.techRecord[0].vehicleClass?.code).toBe('2');
-    expect(result.techRecord[0].vehicleClass?.description).toBe(
+    expect(result?.techRecord[0].vehicleType).toBe('motorcycle');
+    expect(result?.techRecord[0].vehicleClass?.code).toBe('2');
+    expect(result?.techRecord[0].vehicleClass?.description).toBe(
       'motorbikes over 200cc or with a sidecar',
     );
+  });
+  it('should set the vehicle type to LGV', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: Application.MSVA,
+      cycle: 'bike and sidecar',
+    } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result?.techRecord[0].vehicleType).toBe('motorcycle');
+    expect(result?.techRecord[0].vehicleClass?.code).toBe('2');
+    expect(result?.techRecord[0].vehicleClass?.description).toBe(
+      'motorbikes over 200cc or with a sidecar',
+    );
+  });
+  it('should be undefined for a 1P application', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: Application._1P,
+      cycle: 'bike',
+    } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result).toBeUndefined();
   });
   const testCases = [
     {
@@ -178,8 +206,8 @@ describe('Test SQS Event Lambda Function', () => {
         cycle,
       } as LgvExcelAttributes;
       const result = updateFromModel(record, excelRows);
-      expect(result.techRecord[0].vehicleType).toBe('motorcycle');
-      expect(result.techRecord[0].numberOfWheelsDriven).toBe(
+      expect(result?.techRecord[0].vehicleType).toBe('motorcycle');
+      expect(result?.techRecord[0].numberOfWheelsDriven).toBe(
         expectedNumberOfWheels,
       );
     },

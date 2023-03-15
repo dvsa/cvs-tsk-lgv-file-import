@@ -104,10 +104,13 @@ export const updateFromModel = (
       logger.info('Application type 1P, nothing to do...');
       return;
     case Application.IVA1C:
+    case Application._1C:
       newTechRecord.vehicleType = 'car';
       break;
     case Application.MSVA:
-    case 'PSMVA1':
+    case Application.MSVA1:
+    case Application.PSMVA1:
+    case Application.PSMVA:
       newTechRecord.vehicleType = 'motorcycle';
 
       const isClassTwo =
@@ -137,9 +140,16 @@ export const updateFromModel = (
       }
 
       break;
-    case 'IVA1LG':
-    case 'Emissions/LEC':
+    case Application.IVA1LG:
+    case Application._1LG:
+    case Application.LG:
+    case Application.Emissions:
       newTechRecord.vehicleType = 'LGV';
+      break;
+    case Application._1T:
+      newTechRecord.vehicleType = 'TRL';
+      newTechRecord.euVehicleCategory = 'o1';
+      item.trailerId = modelUpdate.trl;
       break;
     default:
       throw new Error(
