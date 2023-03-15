@@ -8,7 +8,7 @@ import {
   Application,
   LgvExcelAttributes,
 } from '../../src/models/lgvExcelAttributes';
-import { handler, updateFromModel } from '../../src/sqsEvent';
+import { handler, processVehicleSubclass, updateFromModel } from '../../src/sqsEvent';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
@@ -123,7 +123,7 @@ describe('Test SQS Event Lambda Function', () => {
       techRecord: [{ statusCode: 'current' }],
     } as LightVehicleRecord;
     const excelRows = {
-      application: Application.MVSA,
+      application: Application.MSVA,
       cycle: 'bike',
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
@@ -135,7 +135,7 @@ describe('Test SQS Event Lambda Function', () => {
       techRecord: [{ statusCode: 'current' }],
     } as LightVehicleRecord;
     const excelRows = {
-      application: Application.MVSA,
+      application: Application.MSVA,
       cycle: 'bike and sidecar',
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
@@ -170,7 +170,7 @@ describe('Test SQS Event Lambda Function', () => {
         techRecord: [{ statusCode: 'current' }],
       } as LightVehicleRecord;
       const excelRows = {
-        application: Application.MVSA,
+        application: Application.MSVA,
         cycle,
       } as LgvExcelAttributes;
       const result = updateFromModel(record, excelRows);
@@ -191,5 +191,45 @@ describe('Test SQS Event Lambda Function', () => {
     expect(() => {
       updateFromModel(record, excelRows);
     }).toThrow();
+  });
+});
+
+describe('vehicleSubclass', () => {
+  const testCases = [
+    {
+      input: 'R',
+      expected: 'r',
+    },
+    {
+      input: 'R WAV',
+      expected: 'r',
+    },
+    {
+      input: 'M Class M',
+      expected: 'm',
+    },
+    {
+      input: 'N1',
+      expected: 'n',
+    },
+    {
+      input: 'n1',
+      expected: 'n',
+    },
+    {
+      input: 'NM1',
+      expected: 'nm',
+    },
+    {
+      input: 'L',
+      expected: 'l',
+    },
+    {
+      input: 'RW',
+      expected: 'rw',
+    },
+  ];
+  it.each(testCases)('should generate the $expected subclass for input $input', ({ input, expected }) => {
+    expect(processVehicleSubclass(input)).toEqual(expected.split(''));
   });
 });

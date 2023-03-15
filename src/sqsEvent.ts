@@ -42,7 +42,9 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     const techRecord = await getTechRecord(modelUpdate);
     const techRecordToUpdate = techRecord
       ? techRecord
-      : ({ techRecord: [{ statusCode: CURRENT_STATUS_CODE }] } as LightVehicleRecord);
+      : ({
+        techRecord: [{ statusCode: CURRENT_STATUS_CODE }],
+      } as LightVehicleRecord);
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord)
@@ -91,14 +93,14 @@ export const updateFromModel = (
   newTechRecord.lastUpdatedAt = newDate;
 
   if (modelUpdate.class) {
-    newTechRecord.vehicleSubclass = [modelUpdate.class];
+    newTechRecord.vehicleSubclass = processVehicleSubclass(modelUpdate.class);
   }
 
   switch (modelUpdate.application) {
     case Application.IVA1C:
       newTechRecord.vehicleType = 'car';
       break;
-    case Application.MVSA:
+    case Application.MSVA:
     case 'PSMVA1':
       newTechRecord.vehicleType = 'motorcycle';
 
@@ -116,6 +118,8 @@ export const updateFromModel = (
       switch (modelUpdate.cycle.toLowerCase()) {
         case 'bike':
         case 'bike and sidecar':
+        case 'MOTORCYCLE':
+        case 'Low powered moped':
           newTechRecord.numberOfWheelsDriven = 1;
           break;
         case 'trike':
@@ -123,6 +127,7 @@ export const updateFromModel = (
           break;
         case 'quad':
           newTechRecord.numberOfWheelsDriven = 3;
+          break;
       }
 
       break;
@@ -138,3 +143,11 @@ export const updateFromModel = (
 
   return item;
 };
+
+export const processVehicleSubclass = (vehicleSubclass: string): string[] => {
+  const stringsToDelete = ['WAV', 'Class'];
+  const removedValues = stringsToDelete.reduce((prev, curr) => prev.replace(curr, ''), vehicleSubclass).toUpperCase();
+  const subclasses = removedValues.match(/[NPASCLTEMRW]/g)?.map(upper => upper.toLowerCase());
+  return [...new Set(subclasses)] ?? [];
+}; 
+

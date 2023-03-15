@@ -12,7 +12,7 @@ export type LgvExcelAttributes = {
 
 export enum Application {
   IVA1C = '1C',
-  MVSA = 'MVSA',
+  MSVA = 'MSVA',
   LG = 'LG',
   _1LG = '1LG',
 }
