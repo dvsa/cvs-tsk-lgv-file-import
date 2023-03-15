@@ -8,7 +8,11 @@ import {
   Application,
   LgvExcelAttributes,
 } from '../../src/models/lgvExcelAttributes';
-import { handler, processVehicleSubclass, updateFromModel } from '../../src/sqsEvent';
+import {
+  handler,
+  processVehicleSubclass,
+  updateFromModel,
+} from '../../src/sqsEvent';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
@@ -229,7 +233,10 @@ describe('vehicleSubclass', () => {
       expected: 'rw',
     },
   ];
-  it.each(testCases)('should generate the $expected subclass for input $input', ({ input, expected }) => {
-    expect(processVehicleSubclass(input)).toEqual(expected.split(''));
-  });
+  it.each(testCases)(
+    'should generate the $expected subclass for input $input',
+    ({ input, expected }) => {
+      expect(processVehicleSubclass(input)).toEqual(expected.split(''));
+    },
+  );
 });

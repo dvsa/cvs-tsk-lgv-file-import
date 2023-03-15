@@ -146,8 +146,11 @@ export const updateFromModel = (
 
 export const processVehicleSubclass = (vehicleSubclass: string): string[] => {
   const stringsToDelete = ['WAV', 'Class'];
-  const removedValues = stringsToDelete.reduce((prev, curr) => prev.replace(curr, ''), vehicleSubclass).toUpperCase();
-  const subclasses = removedValues.match(/[NPASCLTEMRW]/g)?.map(upper => upper.toLowerCase());
+  const removedValues = stringsToDelete
+    .reduce((prev, curr) => prev.replace(curr, ''), vehicleSubclass)
+    .toUpperCase();
+  const subclasses = removedValues
+    .match(/[NPASCLTEMRW]/g)
+    ?.map((upper) => upper.toLowerCase());
   return [...new Set(subclasses)] ?? [];
-}; 
-
+};
