@@ -42,7 +42,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     const techRecord = await getTechRecord(modelUpdate);
     const techRecordToUpdate = techRecord
       ? techRecord
-      : { techRecord: [] } as unknown as LightVehicleRecord ;
+      : ({ techRecord: [{ statusCode: CURRENT_STATUS_CODE }] } as LightVehicleRecord);
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord)
