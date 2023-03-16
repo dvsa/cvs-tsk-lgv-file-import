@@ -50,20 +50,26 @@ describe('updateTechRecords', () => {
     const mockBody = { body: 'Tech Record Updated', statusCode: 200 };
     const mockBuffer = Buffer.from(JSON.stringify(mockBody));
     mockPromise.mockResolvedValueOnce({ Payload: mockBuffer });
-    const result = await updateTechRecord({
-      vin: 'foo',
-      systemNumber: 'bar',
-    } as LightVehicleRecord);
+    const result = await updateTechRecord(
+      {
+        vin: 'foo',
+        systemNumber: 'bar',
+      } as LightVehicleRecord,
+      {} as LgvExcelAttributes,
+    );
     expect(result).toBe(true);
   });
   it('should call the update endpoint and return false if it did not update', async () => {
     const mockBody = { body: 'axles is required', statusCode: 400 };
     const mockBuffer = Buffer.from(JSON.stringify(mockBody));
     mockPromise.mockResolvedValueOnce({ Payload: mockBuffer });
-    const result = await updateTechRecord({
-      vin: 'foo',
-      systemNumber: 'bar',
-    } as LightVehicleRecord);
+    const result = await updateTechRecord(
+      {
+        vin: 'foo',
+        systemNumber: 'bar',
+      } as LightVehicleRecord,
+      {} as LgvExcelAttributes,
+    );
     expect(result).toBe(false);
   });
 });
@@ -73,20 +79,26 @@ describe('createTechRecords', () => {
     const mockBody = { body: 'Tech Record Updated', statusCode: 201 };
     const mockBuffer = Buffer.from(JSON.stringify(mockBody));
     mockPromise.mockResolvedValueOnce({ Payload: mockBuffer });
-    const result = await createTechRecord({
-      vin: 'foo',
-      systemNumber: 'bar',
-    } as LightVehicleRecord);
+    const result = await createTechRecord(
+      {
+        vin: 'foo',
+        systemNumber: 'bar',
+      } as LightVehicleRecord,
+      {} as LgvExcelAttributes,
+    );
     expect(result).toBe(true);
   });
   it('should call the update endpoint and return false if it did not create', async () => {
     const mockBody = { body: 'axles is required', statusCode: 400 };
     const mockBuffer = Buffer.from(JSON.stringify(mockBody));
     mockPromise.mockResolvedValueOnce({ Payload: mockBuffer });
-    const result = await createTechRecord({
-      vin: 'foo',
-      systemNumber: 'bar',
-    } as LightVehicleRecord);
+    const result = await createTechRecord(
+      {
+        vin: 'foo',
+        systemNumber: 'bar',
+      } as LightVehicleRecord,
+      {} as LgvExcelAttributes,
+    );
     expect(result).toBe(false);
   });
 });

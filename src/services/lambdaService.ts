@@ -54,10 +54,9 @@ const getTechRecord = async (
   }
 };
 
-const updateTechRecord: (
+const updateTechRecord = async (
   updatedRecord: LightVehicleRecord,
-) => Promise<boolean> = async (
-  updatedRecord: LightVehicleRecord,
+  excelFields: LgvExcelAttributes,
 ): Promise<boolean> => {
   const payload: APIGatewayEvent = {
     body: JSON.stringify(updatedRecord),
@@ -87,17 +86,20 @@ const updateTechRecord: (
 
   if (responsePayload.statusCode !== 200) {
     logger.error(
-      `received status code ${responsePayload.statusCode} from tech record update`,
+      `Row number: ${excelFields.rowNumber}. Received status code ${
+        responsePayload.statusCode
+      } from tech record update. Response body: ${JSON.stringify(
+        responsePayload.body,
+      )}`,
     );
     return false;
   }
   return true;
 };
 
-const createTechRecord: (
+const createTechRecord = async (
   updatedRecord: LightVehicleRecord,
-) => Promise<boolean> = async (
-  updatedRecord: LightVehicleRecord,
+  excelFields: LgvExcelAttributes,
 ): Promise<boolean> => {
   const payload: APIGatewayEvent = {
     body: JSON.stringify(updatedRecord),
@@ -127,7 +129,11 @@ const createTechRecord: (
 
   if (responsePayload.statusCode !== 201) {
     logger.error(
-      `received status code ${responsePayload.statusCode} from tech record update`,
+      `Row number: ${excelFields.rowNumber}. Received status code ${
+        responsePayload.statusCode
+      } from tech record update. Response body: ${JSON.stringify(
+        responsePayload.body,
+      )}`,
     );
     return false;
   }

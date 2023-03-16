@@ -50,8 +50,8 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
       return true;
     }
     const result = techRecord
-      ? await updateTechRecord(updatedTechRecord)
-      : await createTechRecord(updatedTechRecord);
+      ? await updateTechRecord(updatedTechRecord, modelUpdate)
+      : await createTechRecord(updatedTechRecord, modelUpdate);
     return result;
   } catch (err: unknown) {
     let message = 'unknown error';
