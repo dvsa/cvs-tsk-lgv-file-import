@@ -144,10 +144,10 @@ export const updateFromModel = (
     case Application._1LG:
     case Application.LG:
     case Application.Emissions:
-      newTechRecord.vehicleType = 'LGV';
+      newTechRecord.vehicleType = 'lgv';
       break;
     case Application._1T:
-      newTechRecord.vehicleType = 'TRL';
+      newTechRecord.vehicleType = 'trl';
       newTechRecord.euVehicleCategory = 'o1';
       item.trailerId = modelUpdate.trl;
       break;

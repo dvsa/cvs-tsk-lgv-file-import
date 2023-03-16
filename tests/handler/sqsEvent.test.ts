@@ -151,7 +151,7 @@ describe('Test SQS Event Lambda Function', () => {
       'motorbikes over 200cc or with a sidecar',
     );
   });
-  it('should set the vehicle type to LGV', () => {
+  it('should set the vehicle type to motorcycle', () => {
     const record = {
       techRecord: [{ statusCode: 'current' }],
     } as LightVehicleRecord;
@@ -239,7 +239,7 @@ describe('Test SQS Event Lambda Function', () => {
       application,
     } as LgvExcelAttributes;
     const result = updateFromModel(record, excelRows);
-    expect(result?.techRecord[0].vehicleType).toBe('LGV');
+    expect(result?.techRecord[0].vehicleType).toBe('lgv');
   });
 
   const trailerApplications: Application[] = [Application._1T];
@@ -254,7 +254,7 @@ describe('Test SQS Event Lambda Function', () => {
         trl: 'not a trailer id',
       } as LgvExcelAttributes;
       const result = updateFromModel(record, excelRows);
-      expect(result?.techRecord[0].vehicleType).toBe('TRL');
+      expect(result?.techRecord[0].vehicleType).toBe('trl');
       expect(result?.techRecord[0].euVehicleCategory).toBe('o1');
       expect(result?.trailerId).toBe('not a trailer id');
     },
