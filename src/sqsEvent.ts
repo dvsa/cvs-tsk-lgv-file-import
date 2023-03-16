@@ -114,7 +114,7 @@ export const updateFromModel = (
       newTechRecord.vehicleType = 'motorcycle';
 
       const isClassTwo =
-        (modelUpdate.cc && modelUpdate.cc > 200) ||
+        (modelUpdate.cc && (modelUpdate.cc > 200 || (modelUpdate.cc as unknown as string) === 'ELECTRIC')) ||
         (modelUpdate.cycle.length > 6 &&
           modelUpdate.cycle.indexOf('sidecar') > -1);
       newTechRecord.vehicleClass = {

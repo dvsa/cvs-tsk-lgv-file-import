@@ -166,6 +166,22 @@ describe('Test SQS Event Lambda Function', () => {
       'motorbikes over 200cc or with a sidecar',
     );
   });
+  it('should be a class two motorbike if it is electric', () => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application: Application.MSVA,
+      cycle: 'bike',
+      cc: 'ELECTRIC',
+    } as unknown as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result?.techRecord[0].vehicleType).toBe('motorcycle');
+    expect(result?.techRecord[0].vehicleClass?.code).toBe('2');
+    expect(result?.techRecord[0].vehicleClass?.description).toBe(
+      'motorbikes over 200cc or with a sidecar',
+    );
+  });
   it('should be undefined for a 1P application', () => {
     const record = {
       techRecord: [{ statusCode: 'current' }],
