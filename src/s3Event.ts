@@ -25,7 +25,7 @@ export const handler = async (event: S3Event): Promise<string | undefined> => {
       for (const rowNumber of range(sheetRange.s.r + 2, sheetRange.e.r)) {
         try {
           const model: LgvExcelAttributes = {
-            application: getValue(worksheet, rowNumber, 0),
+            application: getValue(worksheet, rowNumber, 0)?.toUpperCase(),
             vin: getValue(worksheet, rowNumber, 1),
             vrm: getValue(worksheet, rowNumber, 2),
             trl: getValue(worksheet, rowNumber, 3),

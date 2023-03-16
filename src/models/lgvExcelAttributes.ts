@@ -21,7 +21,7 @@ export enum Application {
   _1LG = '1LG',
   _1P = '1P',
   IVA1LG = 'IVA1LG',
-  Emissions = 'Emissions/LEC',
+  Emissions = 'EMISSIONS/LEC',
   DOT = 'DOT',
   _1T = '1T',
 }
