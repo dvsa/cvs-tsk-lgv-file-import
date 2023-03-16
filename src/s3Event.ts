@@ -22,7 +22,7 @@ export const handler = async (event: S3Event): Promise<string | undefined> => {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const sheetRange = XLSX.utils.decode_range(worksheet['!ref'] ?? '');
 
-      for (const rowNumber of range(sheetRange.s.r + 1, sheetRange.e.r)) {
+      for (const rowNumber of range(sheetRange.s.r + 2, sheetRange.e.r)) {
         try {
           const model: LgvExcelAttributes = {
             application: getValue(worksheet, rowNumber, 0),
@@ -33,7 +33,7 @@ export const handler = async (event: S3Event): Promise<string | undefined> => {
             cycle: getValue(worksheet, rowNumber, 5),
             cc: parseInt(getValue(worksheet, rowNumber, 6)),
             filename: lgvExcelFile.filename,
-            rowNumber: rowNumber,
+            rowNumber: rowNumber + 1,
           };
 
           await sqsClient
@@ -45,7 +45,7 @@ export const handler = async (event: S3Event): Promise<string | undefined> => {
         } catch (err: unknown) {
           let message = 'Unknown Error';
           if (err instanceof Error) message = err.message;
-          logger.error(`Invalid data on row ${rowNumber}: ${message}`);
+          logger.error(`Invalid data on row ${rowNumber + 1}: ${message}`);
         }
       }
       return `All rows of ${record.s3.object.key} processed successfully.`;

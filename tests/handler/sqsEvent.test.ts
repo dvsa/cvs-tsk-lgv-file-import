@@ -224,6 +224,41 @@ describe('Test SQS Event Lambda Function', () => {
       updateFromModel(record, excelRows);
     }).toThrow();
   });
+
+  const lgvApplications: Application[] = [
+    Application.IVA1LG,
+    Application._1LG,
+    Application.LG,
+    Application.Emissions,
+  ];
+  it.each(lgvApplications)('$application should map to LGV', (application) => {
+    const record = {
+      techRecord: [{ statusCode: 'current' }],
+    } as LightVehicleRecord;
+    const excelRows = {
+      application,
+    } as LgvExcelAttributes;
+    const result = updateFromModel(record, excelRows);
+    expect(result?.techRecord[0].vehicleType).toBe('LGV');
+  });
+
+  const trailerApplications: Application[] = [Application._1T];
+  it.each(trailerApplications)(
+    '$application should map to TRL',
+    (application) => {
+      const record = {
+        techRecord: [{ statusCode: 'current' }],
+      } as LightVehicleRecord;
+      const excelRows = {
+        application,
+        trl: 'not a trailer id',
+      } as LgvExcelAttributes;
+      const result = updateFromModel(record, excelRows);
+      expect(result?.techRecord[0].vehicleType).toBe('TRL');
+      expect(result?.techRecord[0].euVehicleCategory).toBe('o1');
+      expect(result?.trailerId).toBe('not a trailer id');
+    },
+  );
 });
 
 describe('vehicleSubclass', () => {

@@ -2,6 +2,7 @@ import event from '../resources/s3event.json';
 import type { S3Event } from 'aws-lambda';
 import * as fs from 'fs';
 import { handler } from '../../src/s3Event';
+import { EOL } from 'os';
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable no-var */
@@ -67,7 +68,7 @@ describe('Test S3 Event Lambda Function', () => {
         cycle: 'sidecar',
         cc: 1500,
         filename: 'Light Vehicles for VTM.xlsx',
-        rowNumber: 2,
+        rowNumber: 3,
       }),
     });
   });
@@ -104,5 +105,26 @@ describe('Test S3 Event Lambda Function', () => {
     await expect(res).rejects.toThrow(
       'The file Light Vehicles for VTM.xlsx errored during processing.',
     );
+  });
+
+  it('should log the error message with the line number and continue processing', async () => {
+    filePull.push({
+      data: fs.readFileSync('./tests/resources/Light Vehicles for VTM.xlsx'),
+      filename: 'Light Vehicles for VTM.xlsx',
+    });
+    const errorMessage = 'things are broken';
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const consoleSpy = jest.spyOn(console._stdout, 'write');
+    promise.mockRejectedValueOnce(new Error(errorMessage));
+
+    const eventMock: S3Event = event as S3Event;
+    await handler(eventMock);
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      `error: Invalid data on row 3: ${errorMessage}${EOL}`,
+    );
+    expect(mockSQS.sendMessage).toHaveBeenCalledTimes(2);
   });
 });
