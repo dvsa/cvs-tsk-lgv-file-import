@@ -33,7 +33,7 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
 const doUpdate = async (record: SQSRecord): Promise<boolean> => {
   const modelUpdate = JSON.parse(record.body) as LgvExcelAttributes;
   try {
-    if (!modelUpdate.application || !modelUpdate.vin || (!modelUpdate.vrm && modelUpdate.application !=='1T')) {
+    if (!modelUpdate.application || !modelUpdate.vin || (!modelUpdate.vrm && modelUpdate.application !== '1T')) {
       throw new Error(
         `Row doesn't have the required information for an update. Application: ${modelUpdate.application};
           Vin: ${modelUpdate.vin};  VRM: ${modelUpdate.vrm}`,
@@ -47,8 +47,8 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
         techRecord: [{ statusCode: CURRENT_STATUS_CODE }],
       } as LightVehicleRecord);
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
-    if (!modelUpdate.vrm){
-      throw new Error(`TEMP: ${JSON.stringify(updatedTechRecord)}, ${updatedTechRecord?.primaryVrm}`)
+    if (!modelUpdate.vrm) {
+      throw new Error(`TEMP: ${JSON.stringify(updatedTechRecord)}`);
     }
     if (!updatedTechRecord) {
       return true;
