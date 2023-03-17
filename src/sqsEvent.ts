@@ -35,7 +35,8 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
   try {
     if (!modelUpdate.application || !modelUpdate.vin || !modelUpdate.vrm) {
       throw new Error(
-        "Row doesn't have the required information for an update",
+        `Row doesn't have the required information for an update. Application: ${modelUpdate.application}; 
+          Vin: ${modelUpdate.vin};  VRM: ${modelUpdate.vrm}`,
       );
     }
 
@@ -133,10 +134,10 @@ export const updateFromModel = (
         case 'Low powered moped':
           newTechRecord.numberOfWheelsDriven = 1;
           break;
-        case 'trike':
+        case 'tricycle':
           newTechRecord.numberOfWheelsDriven = 2;
           break;
-        case 'quad':
+        case 'quadricycle':
           newTechRecord.numberOfWheelsDriven = 3;
           break;
       }
