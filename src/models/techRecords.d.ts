@@ -11,6 +11,7 @@ export interface LightVehicleRecord {
 }
 
 export interface LightVehicleTechRecord {
+  euVehicleCategory?: string;
   vehicleType: string;
   noOfAxles: number;
   reasonForCreation: string;

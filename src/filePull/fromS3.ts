@@ -4,12 +4,14 @@ import { S3 } from 'aws-sdk';
 import { S3EventRecord } from 'aws-lambda';
 
 const s3 = new S3(
-  (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
-    s3ForcePathStyle: true,
-    accessKeyId: 'S3RVER',
-    secretAccessKey: 'S3RVER',
-    endpoint: 'http://localhost:4569',
-  },
+  process.env.IS_LOCAL || process.env.IS_OFFLINE
+    ? {
+      s3ForcePathStyle: true,
+      accessKeyId: 'S3RVER',
+      secretAccessKey: 'S3RVER',
+      endpoint: 'http://localhost:4569',
+    }
+    : undefined,
 );
 
 export const filePull = async (
@@ -27,7 +29,7 @@ export const filePull = async (
     logger.debug(`s3Object: ${JSON.stringify(s3Object, null, 2)}`);
     if (!Buffer.isBuffer(s3Object.Body)) {
       throw new Error(
-        `Body of object with ETag ${s3Object.ETag} is not a Buffer.`,
+        `Body of object with ETag ${s3Object.ETag ?? ''} is not a Buffer.`,
       );
     }
 

@@ -8,11 +8,9 @@ import logger from '../util/logger';
 const lambdaName = process.env.LAMBDA_NAME;
 const lambda = new AWS.Lambda();
 
-const getTechRecord: (
+const getTechRecord = async (
   modelUpdate: LgvExcelAttributes,
-) => Promise<LightVehicleRecord> = async (
-  modelUpdate: LgvExcelAttributes,
-): Promise<LightVehicleRecord> => {
+): Promise<LightVehicleRecord | undefined> => {
   const payload: APIGatewayEvent = {
     body: '',
     path: `/vehicles/${modelUpdate.vin}/tech-records`,
@@ -24,7 +22,8 @@ const getTechRecord: (
     },
     multiValueHeaders: {},
     multiValueQueryStringParameters: {},
-    requestContext: null,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
     isBase64Encoded: false,
     headers: {},
     stageVariables: {},
@@ -32,14 +31,14 @@ const getTechRecord: (
   };
 
   const lambdaRequest: InvocationRequest = {
-    FunctionName: lambdaName,
+    FunctionName: lambdaName ?? '',
     InvocationType: 'RequestResponse',
     Payload: JSON.stringify(payload),
   };
 
   const response = await lambda.invoke(lambdaRequest).promise();
   const responsePayload = JSON.parse(
-    response.Payload.toString('utf8'),
+    response.Payload?.toString('utf8') ?? '',
   ) as APIGatewayProxyResult;
   const vehicles = JSON.parse(responsePayload.body) as LightVehicleRecord[];
 
@@ -53,50 +52,92 @@ const getTechRecord: (
   if (vehicles.length > 0) {
     return vehicles[0];
   }
-
-  //Unable to guarantee vehicle - throw
-  throw new Error(
-    `Application on row ${modelUpdate.rowNumber} of ${modelUpdate.filename} doesn't resolve to a single vehicle`,
-  );
 };
 
-const updateTechRecord: (
+const updateTechRecord = async (
   updatedRecord: LightVehicleRecord,
-) => Promise<boolean> = async (
-  updatedRecord: LightVehicleRecord,
+  excelFields: LgvExcelAttributes,
 ): Promise<boolean> => {
   const payload: APIGatewayEvent = {
     body: JSON.stringify(updatedRecord),
-    path: '/vehicles/update-status/' + updatedRecord.systemNumber.toString(),
+    path: '/vehicles/' + updatedRecord.systemNumber.toString(),
     httpMethod: 'PUT',
     pathParameters: { systemNumber: updatedRecord.systemNumber.toString() },
     queryStringParameters: null,
     multiValueHeaders: {},
     multiValueQueryStringParameters: {},
-    requestContext: null,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
     isBase64Encoded: false,
     headers: {},
     stageVariables: {},
     resource: '',
   };
   const lambdaRequest: InvocationRequest = {
-    FunctionName: lambdaName,
+    FunctionName: lambdaName ?? '',
     InvocationType: 'RequestResponse',
     Payload: JSON.stringify(payload),
   };
 
   const response = await lambda.invoke(lambdaRequest).promise();
   const responsePayload = JSON.parse(
-    response.Payload.toString('utf8'),
+    response.Payload?.toString('utf8') ?? '',
   ) as APIGatewayProxyResult;
 
   if (responsePayload.statusCode !== 200) {
     logger.error(
-      `received status code ${responsePayload.statusCode} from tech record update`,
+      `Row number: ${excelFields.rowNumber}. Received status code ${
+        responsePayload.statusCode
+      } from tech record update. Response body: ${JSON.stringify(
+        responsePayload.body,
+      )}`,
     );
     return false;
   }
   return true;
 };
 
-export { getTechRecord, updateTechRecord };
+const createTechRecord = async (
+  updatedRecord: LightVehicleRecord,
+  excelFields: LgvExcelAttributes,
+): Promise<boolean> => {
+  const payload: APIGatewayEvent = {
+    body: JSON.stringify(updatedRecord),
+    path: '/vehicles',
+    httpMethod: 'POST',
+    pathParameters: null,
+    queryStringParameters: null,
+    multiValueHeaders: {},
+    multiValueQueryStringParameters: {},
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    requestContext: null as any,
+    isBase64Encoded: false,
+    headers: {},
+    stageVariables: {},
+    resource: '',
+  };
+  const lambdaRequest: InvocationRequest = {
+    FunctionName: lambdaName ?? '',
+    InvocationType: 'RequestResponse',
+    Payload: JSON.stringify(payload),
+  };
+
+  const response = await lambda.invoke(lambdaRequest).promise();
+  const responsePayload = JSON.parse(
+    response.Payload?.toString('utf8') ?? '',
+  ) as APIGatewayProxyResult;
+
+  if (responsePayload.statusCode !== 201) {
+    logger.error(
+      `Row number: ${excelFields.rowNumber}. Received status code ${
+        responsePayload.statusCode
+      } from tech record update. Response body: ${JSON.stringify(
+        responsePayload.body,
+      )}`,
+    );
+    return false;
+  }
+  return true;
+};
+
+export { getTechRecord, updateTechRecord, lambda, createTechRecord };

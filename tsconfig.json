@@ -3,11 +3,11 @@
     "target": "es2019",
     "module": "NodeNext",
     "allowJs": true,
-    "checkJs": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

@@ -13,7 +13,7 @@ import { GetObjectOutput } from 'aws-sdk/clients/s3';
 import { filePull } from '../../src/filePull/fromS3';
 
 describe('Test pull file from S3', () => {
-  test('should return file content', async () => {
+  it('should return file content', async () => {
     const getObjectOutput: GetObjectOutput = {
       ContentType: 'text/csv',
       Body: Buffer.from('File content'),
@@ -30,7 +30,7 @@ describe('Test pull file from S3', () => {
     expect(evlFileData).toStrictEqual(expectedEvlFileData);
   });
 
-  test('should return error if body not a Buffer', async () => {
+  it('should return error if body not a Buffer', async () => {
     const getObjectOutput: GetObjectOutput = {
       ContentType: 'text/csv',
       ETag: 'c4c7b60167b533a5eae07b5ce38d7368',

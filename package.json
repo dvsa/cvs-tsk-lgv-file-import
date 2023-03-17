@@ -13,7 +13,7 @@
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "lint:ci": "eslint '*/**/*.ts'",
     "format": "prettier --write .",
-    "audit": "npm audit",
+    "audit": "npm audit --prod",
     "sonar-scanner": "npm run test && sonar-scanner",
     "security-checks": "git secrets --scan",
     "package": "mkdir ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production --ignore-scripts && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip . && cd .. && rimraf ${ZIP_NAME}",
@@ -74,7 +74,7 @@
     "serverless": "^3.19.0",
     "serverless-offline": "^8.8.0",
     "serverless-plugin-typescript": "^2.1.2",
-    "serverless-s3-local": "^0.6.22",
+    "serverless-s3-local": "^0.7.1",
     "source-map-support": "^0.5.19",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.6",
@@ -84,7 +84,7 @@
     "got": "^11.8.5"
   },
   "engines": {
-    "node": "^14.17.3"
+    "node": "^18.*"
   },
   "jestSonar": {
     "reportPath": ".reports",
