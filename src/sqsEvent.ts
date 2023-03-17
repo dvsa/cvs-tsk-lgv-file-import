@@ -51,6 +51,9 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
         techRecord: [{ statusCode: CURRENT_STATUS_CODE }],
       } as LightVehicleRecord);
     const updatedTechRecord = updateFromModel(techRecordToUpdate, modelUpdate);
+    if (!modelUpdate.vrm) {
+      throw new Error(`TEMP: ${JSON.stringify(updatedTechRecord)}`);
+    }
     if (!updatedTechRecord) {
       return true;
     }
