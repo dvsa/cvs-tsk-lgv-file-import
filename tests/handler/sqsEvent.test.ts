@@ -204,11 +204,11 @@ describe('Test SQS Event Lambda Function', () => {
     },
     {
       expectedNumberOfWheels: 2,
-      cycle: 'trike',
+      cycle: 'tricycle',
     },
     {
       expectedNumberOfWheels: 3,
-      cycle: 'quad',
+      cycle: 'quadricycle',
     },
   ];
   it.each(testCases)(
