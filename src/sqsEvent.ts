@@ -54,6 +54,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     if (!updatedTechRecord) {
       return true;
     }
+    logger.error(`TEMP: ${JSON.stringify(updatedTechRecord)}`);
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord, modelUpdate)
       : await createTechRecord(updatedTechRecord, modelUpdate);
@@ -86,7 +87,7 @@ export const updateFromModel = (
   const newDate = new Date().toISOString();
 
   item.vin = modelUpdate.vin;
-  if (modelUpdate.vrm !== '') item.primaryVrm = modelUpdate.vrm;
+  item.primaryVrm = modelUpdate.vrm;
   item.msUserDetails = {
     msUser: 'LGV Update Process',
     msOid: 'lgvUpdateProcess',
@@ -157,6 +158,7 @@ export const updateFromModel = (
       newTechRecord.vehicleType = 'trl';
       newTechRecord.euVehicleCategory = 'o1';
       item.trailerId = modelUpdate.trl;
+      item.primaryVrm = modelUpdate.trl;
       break;
     default:
       throw new Error(
