@@ -39,8 +39,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
       (!modelUpdate.vrm && modelUpdate.application !== '1T')
     ) {
       throw new Error(
-        `Row doesn't have the required information for an update. Application: ${modelUpdate.application};
-          Vin: ${modelUpdate.vin};  VRM: ${modelUpdate.vrm}`,
+        `Row doesn't have the required information for an update. Application: ${modelUpdate.application}; Vin: ${modelUpdate.vin};  VRM: ${modelUpdate.vrm}`,
       );
     }
 
@@ -54,7 +53,7 @@ const doUpdate = async (record: SQSRecord): Promise<boolean> => {
     if (!updatedTechRecord) {
       return true;
     }
-    logger.error(`TEMP: ${JSON.stringify(updatedTechRecord)}`);
+
     const result = techRecord
       ? await updateTechRecord(updatedTechRecord, modelUpdate)
       : await createTechRecord(updatedTechRecord, modelUpdate);
